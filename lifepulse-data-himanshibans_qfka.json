@@ -1,0 +1,170 @@
+{
+  "sections": [
+    {
+      "id": "health",
+      "name": "Health & Fitness",
+      "icon": "💪",
+      "color": "#22a06b",
+      "enabled": true,
+      "habits": [
+        "Morning workout",
+        "Evening walk",
+        "Drink 8 glasses water",
+        "No junk food",
+        "Sleep by 11 PM"
+      ]
+    },
+    {
+      "id": "study",
+      "name": "Study & Knowledge",
+      "icon": "📚",
+      "color": "#2e7ef0",
+      "enabled": true,
+      "habits": [
+        "Read 30 minutes",
+        "Solve problems",
+        "Review notes"
+      ]
+    },
+    {
+      "id": "office",
+      "name": "Office & Work",
+      "icon": "💼",
+      "color": "#d4820a",
+      "enabled": true,
+      "habits": [
+        "Complete daily tasks",
+        "Reply emails",
+        "Plan tomorrow",
+        "Deep work 1hr"
+      ]
+    },
+    {
+      "id": "creative",
+      "name": "Creativity",
+      "icon": "🎨",
+      "color": "#e0368c",
+      "enabled": true,
+      "habits": [
+        "Creative project 15min",
+        "Journal or write"
+      ]
+    },
+    {
+      "id": "skills",
+      "name": "Skills & Growth",
+      "icon": "🚀",
+      "color": "#7c3aed",
+      "enabled": false,
+      "habits": [
+        "Practice skill 20min",
+        "Course module"
+      ]
+    },
+    {
+      "id": "wellness",
+      "name": "Wellness & Mind",
+      "icon": "🧘",
+      "color": "#0891b2",
+      "enabled": false,
+      "habits": [
+        "10min meditation",
+        "Gratitude journal"
+      ]
+    }
+  ],
+  "habits": {},
+  "meals": [],
+  "cycle": {
+    "periods": [],
+    "cycleLength": 28,
+    "periodLength": 5,
+    "symptoms": {},
+    "moods": {}
+  },
+  "prefs": {
+    "showCycle": true,
+    "quotes": true
+  },
+  "meta": {
+    "lastBackup": null,
+    "lastRestore": null,
+    "createdAt": "2026-05-02T06:25:13.543Z",
+    "lastExport": "2026-05-02T06:25:41.870Z",
+    "reminderDismissed": "2026-05-02T06:25:41.875Z"
+  },
+  "streak": 0,
+  "profile": {
+    "name": "Himanshi Bansal",
+    "nick": "Himanshi"
+  },
+  "milk": {
+    "days": {},
+    "pricePerDay": 35,
+    "defQty": 500,
+    "paidMonths": []
+  },
+  "shop": {
+    "items": [],
+    "categories": [
+      "Groceries",
+      "Personal Care",
+      "Clothes",
+      "Electronics",
+      "Home",
+      "Medicine",
+      "Other"
+    ]
+  },
+  "finance": {
+    "entries": [],
+    "categories": [
+      {
+        "id": "eating",
+        "name": "Eating & Food",
+        "icon": "🍱",
+        "color": "#f4732a",
+        "budget": 4000,
+        "alert": 80
+      },
+      {
+        "id": "shopping",
+        "name": "Shopping",
+        "icon": "🛍️",
+        "color": "#e0368c",
+        "budget": 3000,
+        "alert": 80
+      },
+      {
+        "id": "basics",
+        "name": "Basics (Rent/Elec)",
+        "icon": "🏠",
+        "color": "#2e7ef0",
+        "budget": 15000,
+        "alert": 90
+      },
+      {
+        "id": "extra",
+        "name": "Extra (Sport/Rides)",
+        "icon": "🏸",
+        "color": "#22a06b",
+        "budget": 2000,
+        "alert": 80
+      },
+      {
+        "id": "partner",
+        "name": "Boyfriend 💕",
+        "icon": "💕",
+        "color": "#7c3aed",
+        "budget": 2000,
+        "alert": 80
+      }
+    ],
+    "monthBudget": 30000
+  },
+  "appearance": {
+    "theme": "warm",
+    "font": "jakarta",
+    "accent": "#f4732a"
+  }
+}
