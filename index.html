@@ -1,0 +1,2591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pulse">
+<meta name="theme-color" content="#fff8f0">
+<link rel="manifest" href="data:application/json,{%22name%22:%22LifePulse%22,%22short_name%22:%22LifePulse%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23fff8f0%22,%22theme_color%22:%22%23f4732a%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⚡%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22}]}">
+<title>Pulse ⚡</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── THEME VARS (overrideable) ── */
+:root{
+  --bg:#fff8f0;--bg2:#fef0e0;--card:#fff;--card2:#fffaf5;
+  --border:rgba(200,150,80,.14);--border2:rgba(200,150,80,.28);
+  --txt:#1a110a;--txt2:#6b4a2a;--txt3:#b08060;
+  --or:#f4732a;--or2:#e05818;--ors:rgba(244,115,42,.11);--ors2:rgba(244,115,42,.22);
+  --gr:#22a06b;--grs:rgba(34,160,107,.12);
+  --bl:#2e7ef0;--bls:rgba(46,126,240,.12);
+  --pu:#7c3aed;--pus:rgba(124,58,237,.12);
+  --pk:#e0368c;--pks:rgba(224,54,140,.12);
+  --ye:#d4820a;--yes:rgba(212,130,10,.12);
+  --te:#0891b2;--tes:rgba(8,145,178,.12);
+  --re:#dc2626;--res:rgba(220,38,38,.12);
+  --sh:0 1px 8px rgba(180,110,40,.08);
+  --sh2:0 3px 16px rgba(180,110,40,.13);
+  --sh3:0 6px 32px rgba(180,110,40,.19);
+  --r:14px;--r2:20px;
+  --font-body:'Plus Jakarta Sans',sans-serif;
+  --font-head:'Syne',sans-serif;
+  --font-num:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font-body);background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+/* ── WELCOME SCREEN ── */
+#welcome-screen{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#fff8f0 0%,#fef0e0 50%,#fff8f0 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;text-align:center}
+.wlc-logo{font-size:64px;margin-bottom:16px;animation:wlcPop .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes wlcPop{from{transform:scale(0) rotate(-20deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.wlc-title{font-family:var(--font-head);font-size:30px;font-weight:800;color:var(--txt);margin-bottom:8px}
+.wlc-sub{font-size:14px;color:var(--txt2);line-height:1.65;margin-bottom:32px;max-width:300px}
+.wlc-inp-wrap{width:100%;max-width:340px;margin-bottom:16px}
+.wlc-inp{width:100%;font-size:20px;font-family:var(--font-head);font-weight:700;text-align:center;background:var(--card);border:2px solid var(--border2);border-radius:18px;color:var(--txt);padding:16px 20px;outline:none;transition:border-color .2s;box-shadow:var(--sh2)}
+.wlc-inp:focus{border-color:var(--or)}
+.wlc-inp::placeholder{color:var(--txt3);font-weight:400;font-size:16px}
+.wlc-btn{width:100%;max-width:340px;background:var(--or);color:#fff;border:none;border-radius:16px;font-family:var(--font-head);font-size:16px;font-weight:800;padding:16px;cursor:pointer;box-shadow:0 6px 24px rgba(244,115,42,.35);transition:.2s;letter-spacing:.02em}
+.wlc-btn:active{transform:scale(.97)}
+.wlc-note{font-size:11px;color:var(--txt3);margin-top:20px;line-height:1.7;max-width:300px}
+/* recovery mode */
+.wlc-recover{margin-top:20px;font-size:13px;color:var(--or);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.wlc-recover-form{display:none;width:100%;max-width:340px;margin-top:16px}
+
+/* ── PROFILE CHIP in settings ── */
+.profile-chip{background:linear-gradient(135deg,var(--or),var(--or2));border-radius:16px;padding:16px 18px;color:#fff;margin-bottom:14px;position:relative}
+.profile-chip-id{font-family:var(--font-num);font-size:13px;font-weight:500;background:rgba(0,0,0,.2);border-radius:8px;padding:6px 10px;margin-top:8px;letter-spacing:.05em;display:flex;align-items:center;justify-content:space-between}
+.profile-chip-copy{background:rgba(255,255,255,.2);border:none;border-radius:6px;color:#fff;font-size:11px;font-family:var(--font-head);font-weight:700;padding:4px 8px;cursor:pointer}
+
+/* ── EXPORT REMINDER BANNER ── */
+#export-reminder{display:none;margin:0 20px 12px;background:var(--yes);border:1.5px solid var(--ye);border-radius:14px;padding:12px 16px;align-items:center;justify-content:space-between;gap:10px}
+#export-reminder.show{display:flex}
+
+
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1.5px solid var(--border);display:flex;padding:6px 0 calc(8px + env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 24px rgba(180,110,40,.09)}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 0;cursor:pointer;transition:.2s}
+.ni-icon{font-size:19px;transition:transform .2s}
+.ni-lbl{font-size:9px;font-family:var(--font-head);font-weight:700;color:var(--txt3);letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.ni.active .ni-lbl{color:var(--or)}
+.ni.active .ni-icon{transform:translateY(-2px)}
+
+/* ── HAMBURGER MENU ── */
+.hmenu-btn{position:fixed;top:14px;right:16px;z-index:150;width:40px;height:40px;border-radius:12px;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--sh);font-size:18px}
+.hmenu-overlay{position:fixed;inset:0;background:rgba(26,17,10,.4);z-index:200;display:none}
+.hmenu-overlay.show{display:block}
+.hmenu-drawer{position:fixed;top:0;right:-280px;width:280px;height:100vh;background:var(--card);z-index:201;transition:right .3s ease;overflow-y:auto;box-shadow:var(--sh3)}
+.hmenu-drawer.open{right:0}
+.hmenu-head{padding:56px 20px 20px;background:linear-gradient(135deg,var(--or),var(--or2));position:relative}
+.hmenu-avatar{font-size:40px;margin-bottom:8px}
+.hmenu-name{font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff}
+.hmenu-tag{font-size:12px;color:rgba(255,255,255,.7);margin-top:3px}
+.hmenu-items{padding:12px 0}
+.hmenu-item{display:flex;align-items:center;gap:14px;padding:14px 20px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)}
+.hmenu-item:hover{background:var(--bg2)}
+.hmenu-item-icon{font-size:20px;width:36px;text-align:center}
+.hmenu-item-txt{font-size:14px;font-weight:600}
+.hmenu-item-sub{font-size:11px;color:var(--txt3);margin-top:1px}
+.hmenu-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.2);border:none;border-radius:8px;width:32px;height:32px;color:#fff;font-size:16px;cursor:pointer}
+
+/* ── PAGES ── */
+.page{display:none;padding-bottom:90px;min-height:100vh;animation:pgIn .25s ease}
+.page.active{display:block}
+@keyframes pgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HEADER ── */
+.ph{padding:52px 20px 14px}
+.pt{font-size:24px;font-weight:800;font-family:var(--font-head);color:var(--txt)}
+.ps{font-size:13px;color:var(--txt2);margin-top:3px}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);box-shadow:var(--sh)}
+.cp{padding:18px 20px}
+.slbl{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px}
+
+/* ── DATE STRIP ── */
+.dstrip{padding:0 20px 14px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.dstrip::-webkit-scrollbar{display:none}
+.dchip{min-width:50px;height:66px;border-radius:16px;background:var(--card);border:1.5px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;flex-shrink:0;box-shadow:var(--sh);transition:.15s}
+.dchip.today{border-color:var(--or);background:var(--ors)}
+.dchip.done{background:var(--grs);border-color:var(--gr)}
+.dchip.editing{border-color:var(--pu);background:var(--pus);box-shadow:0 0 0 2px rgba(124,58,237,.3)}
+.dc-d{font-size:9px;font-family:var(--font-head);font-weight:700;color:var(--txt3);letter-spacing:.1em;text-transform:uppercase}
+.dc-n{font-family:var(--font-num);font-size:19px;font-weight:500;color:var(--txt2)}
+.dchip.today .dc-n{color:var(--or)}.dchip.done .dc-n{color:var(--gr)}.dchip.editing .dc-n{color:var(--pu)}
+
+/* ── EDIT BANNER ── */
+.edit-banner{margin:0 20px 12px;background:var(--pus);border:1.5px solid var(--pu);border-radius:14px;padding:10px 16px;display:none;align-items:center;justify-content:space-between}
+.edit-banner.show{display:flex}
+.edit-banner-txt{font-size:13px;font-weight:600;color:var(--pu)}
+.edit-banner-close{background:var(--pu);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;font-family:var(--font-head);padding:5px 10px;cursor:pointer}
+
+/* ── SCORE HERO ── */
+.score-hero{margin:0 20px 14px;border-radius:var(--r2);padding:20px 22px 18px;position:relative;overflow:hidden;background:linear-gradient(135deg,#f4732a,#e8480a 60%,#c93808);box-shadow:0 8px 32px rgba(232,72,10,.28)}
+.score-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.08)}
+.score-hero::after{content:'';position:absolute;bottom:-60px;left:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05)}
+.sh-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.14em;text-transform:uppercase}
+.sh-val{font-family:var(--font-num);font-size:58px;font-weight:500;color:#fff;line-height:1;margin:4px 0;letter-spacing:-.02em}
+.sh-desc{font-size:13px;color:rgba(255,255,255,.72)}
+.sh-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:14px}
+.sh-fill{height:100%;border-radius:3px;background:rgba(255,255,255,.9);transition:width 1s ease}
+
+/* ── TODAY MINI CHART ── */
+.today-chart-wrap{margin:0 20px 14px}
+.today-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.tsc{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);padding:12px 10px;text-align:center;box-shadow:var(--sh)}
+.tsc-v{font-family:var(--font-num);font-size:20px;font-weight:500}
+.tsc-l{font-size:10px;color:var(--txt2);margin-top:2px}
+
+/* ── QUOTE ── */
+.qcard{margin:0 20px 14px}
+.qt{font-size:14px;color:var(--txt2);line-height:1.65;font-style:italic}
+.qa{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--or);margin-top:6px;text-transform:uppercase;letter-spacing:.1em}
+
+/* ── SECTION CARDS ── */
+.secs{padding:0 20px;display:flex;flex-direction:column;gap:11px}
+.sec-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);overflow:hidden;box-shadow:var(--sh)}
+.sec-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.sec-icon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.sec-nm{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--txt)}
+.sec-sb{font-size:11px;color:var(--txt3);margin-top:1px;font-family:var(--font-num)}
+.sec-rt{display:flex;align-items:center;gap:5px}
+.trend-pill{font-size:10px;font-family:var(--font-head);font-weight:700;color:var(--or);background:var(--ors);border:none;border-radius:7px;padding:4px 8px;cursor:pointer}
+.chev{color:var(--txt3);font-size:12px;transition:transform .3s}
+.sec-card.open .chev{transform:rotate(180deg)}
+.sec-body{display:none;border-top:1.5px solid var(--border)}
+.sec-card.open .sec-body{display:block}
+.hlist{padding:4px 0 8px}
+.hitem{display:flex;align-items:center;gap:12px;padding:11px 16px}
+.hitem+.hitem{border-top:1px solid var(--border)}
+.hchk{width:26px;height:26px;border-radius:8px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.18s;font-size:13px;color:#fff}
+.hchk.done{border-color:transparent}
+.hnm{font-size:13px;font-weight:500;color:var(--txt)}
+.hst{font-size:11px;color:var(--txt3);margin-top:1px;font-family:var(--font-num)}
+.pring{width:34px;height:34px}
+.pring circle{fill:none;stroke-width:3;stroke-linecap:round}
+.pring .bg{stroke:#f0e4d4}
+
+/* ── STATS ── */
+.ptabs{display:flex;padding:0 20px 12px;gap:8px}
+.ptab{padding:7px 15px;border-radius:20px;border:1.5px solid var(--border2);font-family:var(--font-head);font-size:11px;font-weight:700;cursor:pointer;background:var(--card);color:var(--txt2);box-shadow:var(--sh);transition:.2s}
+.ptab.active{background:var(--or);border-color:var(--or);color:#fff;box-shadow:0 3px 12px rgba(244,115,42,.35)}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 12px}
+.scard{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px 16px;box-shadow:var(--sh)}
+.sv{font-family:var(--font-num);font-size:24px;font-weight:500;letter-spacing:-.02em}
+.sl{font-size:11px;color:var(--txt2);margin-top:3px}
+.ccrd{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);margin:0 20px 12px;padding:16px 16px 12px;box-shadow:var(--sh)}
+.ctitle{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.bchart{display:flex;align-items:flex-end;gap:4px;height:100px}
+.bcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
+.bar{width:100%;border-radius:6px 6px 0 0;min-height:3px;transition:height .6s ease}
+.blbl{font-size:9px;color:var(--txt3);font-family:var(--font-num)}
+.stabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.stab{padding:5px 11px;border-radius:20px;border:1.5px solid var(--border);font-size:10px;font-family:var(--font-head);font-weight:700;cursor:pointer;background:var(--card2);color:var(--txt2);transition:.2s}
+.stab.active{border-color:var(--or);color:var(--or);background:var(--ors)}
+.hm-wrap{overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.hm-wrap::-webkit-scrollbar{display:none}
+.leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txt2)}
+.leg-dot{width:12px;height:12px;border-radius:4px;flex-shrink:0}
+
+/* ── MEALS ── */
+.tinp{flex:1;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--txt);font-family:var(--font-body);font-size:14px;padding:10px 13px;outline:none;transition:border-color .2s}
+.tinp:focus{border-color:var(--or)}
+.tinp::placeholder{color:var(--txt3)}
+.btn{background:var(--or);color:#fff;border:none;border-radius:12px;padding:10px 15px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap;box-shadow:0 3px 10px rgba(244,115,42,.3)}
+.btn:active{transform:scale(.97)}
+.btn-sec{background:var(--card);border:1.5px solid var(--border2);border-radius:12px;color:var(--txt2);font-family:var(--font-head);font-size:12px;font-weight:700;padding:10px 14px;cursor:pointer}
+.aload{display:none;align-items:center;gap:8px;color:var(--txt2);font-size:13px;margin-top:8px}
+.dots span{animation:blink 1.2s infinite;font-size:18px;color:var(--or)}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
+.mresult{background:var(--bg2);border-radius:14px;padding:14px;margin-top:10px;display:none;border:1.5px solid var(--border)}
+.mresult.show{display:block}
+.dmgbar{height:8px;border-radius:4px;background:var(--border);margin:8px 0 4px;overflow:hidden}
+.dmgfill{height:100%;border-radius:4px;transition:width .8s ease}
+.ainsight{background:var(--card);border-left:3px solid var(--or);border-radius:0 12px 12px 0;padding:10px 12px;margin-top:8px;font-size:13px;color:var(--txt2);line-height:1.65}
+.mtag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-family:var(--font-head);font-weight:700;background:var(--res);color:var(--re);margin:2px}
+.mcard{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh)}
+.minfo{flex:1;min-width:0}
+.mname{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mmeta{font-size:11px;color:var(--txt3);margin-top:2px;font-family:var(--font-num)}
+
+/* ── MILK ── */
+.milk-hero{margin:0 20px 14px;border-radius:var(--r2);padding:20px;background:linear-gradient(135deg,#0891b2,#0e7490);box-shadow:0 6px 28px rgba(8,145,178,.28);position:relative;overflow:hidden}
+.milk-hero::before{content:'';position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.09);pointer-events:none}
+.milk-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.milk-dh{text-align:center;font-size:9px;font-family:var(--font-head);font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.07em;text-transform:uppercase;padding:2px 0}
+.milk-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;font-size:11px;font-family:var(--font-num);cursor:pointer;transition:.15s;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);border:1.5px solid transparent;gap:1px}
+.milk-day.bought{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.5);color:#fff;font-weight:700}
+.milk-day.today-m{outline:2px solid #fff;outline-offset:1px}
+.milk-day.future{opacity:.3;cursor:default}
+.milk-day.empty{background:transparent;border-color:transparent;cursor:default}
+.milk-qty-lbl{font-size:8px;color:rgba(255,255,255,.7);line-height:1}
+.milk-stat-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px}
+.milk-stat{text-align:center}
+.milk-stat-v{font-family:var(--font-num);font-size:20px;font-weight:500;color:#fff;letter-spacing:-.01em}
+.milk-stat-l{font-size:10px;color:rgba(255,255,255,.6);font-family:var(--font-head);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+.milk-month-row{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 16px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sh)}
+/* milk qty input modal */
+.qty-modal{position:fixed;inset:0;background:rgba(26,17,10,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.qty-modal.show{display:flex}
+.qty-sheet{background:var(--card);border-radius:var(--r2);padding:22px;width:100%;max-width:320px;box-shadow:var(--sh3)}
+.qty-title{font-family:var(--font-head);font-size:16px;font-weight:800;margin-bottom:14px}
+.qty-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.qty-opt{padding:12px;border-radius:12px;border:1.5px solid var(--border);text-align:center;cursor:pointer;transition:.15s;font-family:var(--font-num);font-size:15px;font-weight:500}
+.qty-opt:hover,.qty-opt.sel{border-color:var(--te);background:var(--tes);color:var(--te)}
+.qty-custom-row{display:flex;gap:8px}
+
+
+/* ── SHOPPING LIST ── */
+.shop-hero{margin:0 20px 14px;border-radius:var(--r2);padding:20px 22px;background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 6px 28px rgba(124,58,237,.30);position:relative;overflow:hidden}
+.shop-hero::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.09)}
+.shop-month-tabs{display:flex;padding:0 20px 10px;gap:8px;overflow-x:auto;scrollbar-width:none}
+.shop-month-tabs::-webkit-scrollbar{display:none}
+.shop-mtab{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);font-family:var(--font-head);font-size:11px;font-weight:700;cursor:pointer;background:var(--card);color:var(--txt2);white-space:nowrap;box-shadow:var(--sh);transition:.2s;flex-shrink:0}
+.shop-mtab.active{background:var(--pu);border-color:var(--pu);color:#fff}
+.shop-item{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 16px;margin-bottom:9px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh);transition:.2s}
+.shop-item.bought{opacity:.65;background:var(--grs);border-color:var(--gr)}
+.shop-chk{width:28px;height:28px;border-radius:9px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:.18s;font-size:14px;color:#fff}
+.shop-chk.done{background:var(--gr);border-color:var(--gr)}
+.shop-item-info{flex:1;min-width:0}
+.shop-item-name{font-size:14px;font-weight:500;color:var(--txt)}
+.shop-item.bought .shop-item-name{text-decoration:line-through;color:var(--txt3)}
+.shop-item-meta{font-size:11px;color:var(--txt3);margin-top:2px;font-family:var(--font-num)}
+.shop-item-price{font-family:var(--font-num);font-size:14px;font-weight:500;color:var(--pu)}
+.shop-item.bought .shop-item-price{color:var(--gr)}
+.shop-cat-badge{padding:2px 8px;border-radius:20px;font-size:10px;font-family:var(--font-head);font-weight:700}
+.shop-add-card{margin:0 20px 14px}
+.shop-cat-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.shop-cat-pill{padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);font-size:12px;cursor:pointer;transition:.15s;background:var(--card2);color:var(--txt2)}
+.shop-cat-pill.sel{border-color:var(--pu);background:var(--pus);color:var(--pu)}
+.shop-filter-row{display:flex;gap:6px;margin:0 20px 10px;overflow-x:auto;scrollbar-width:none}
+.shop-filter-row::-webkit-scrollbar{display:none}
+.shop-ftab{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);font-family:var(--font-head);font-size:10px;font-weight:700;cursor:pointer;background:var(--card2);color:var(--txt2);white-space:nowrap;flex-shrink:0;transition:.2s}
+.shop-ftab.active{border-color:var(--pu);color:var(--pu);background:var(--pus)}
+
+/* ── FINANCE ── */
+.fin-hero{margin:0 20px 12px;border-radius:var(--r2);padding:20px;background:linear-gradient(135deg,#4f46e5,#7c3aed);box-shadow:0 6px 28px rgba(79,70,229,.30);position:relative;overflow:hidden}
+.fin-hero::before{content:'';position:absolute;top:-30px;right:-30px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.07)}
+.fin-ring-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px}
+.fin-ring-label{font-family:var(--font-num);font-size:13px;color:rgba(255,255,255,.8)}
+.fin-cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 12px}
+.fin-cat-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px;box-shadow:var(--sh);cursor:pointer;transition:.15s}
+.fin-cat-card:active{transform:scale(.98)}
+.fin-cat-card.over-bgt{border-color:var(--re);animation:pulse-red 2s infinite}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3)}50%{box-shadow:0 0 0 5px rgba(220,38,38,.0)}}
+.fcc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.fcc-icon{font-size:20px}
+.fcc-spent{font-family:var(--font-num);font-size:15px;font-weight:500}
+.fcc-name{font-size:11px;font-family:var(--font-head);font-weight:700;color:var(--txt2);margin-bottom:5px}
+.fcc-bar{height:5px;border-radius:3px;background:var(--bg2);overflow:hidden}
+.fcc-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.fcc-rem{font-size:10px;color:var(--txt3);margin-top:4px;font-family:var(--font-num)}
+.fin-mtabs{display:flex;padding:0 20px 10px;gap:8px;overflow-x:auto;scrollbar-width:none}
+.fin-mtabs::-webkit-scrollbar{display:none}
+.fin-mtab{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);font-family:var(--font-head);font-size:11px;font-weight:700;cursor:pointer;background:var(--card);color:var(--txt2);white-space:nowrap;box-shadow:var(--sh);transition:.2s;flex-shrink:0}
+.fin-mtab.active{background:#4f46e5;border-color:#4f46e5;color:#fff}
+.fin-entry-item{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 15px;margin-bottom:9px;box-shadow:var(--sh)}
+.fei-top{display:flex;align-items:center;justify-content:space-between}
+.fei-badge{padding:3px 9px;border-radius:20px;font-size:10px;font-family:var(--font-head);font-weight:700}
+.fei-amt{font-family:var(--font-num);font-size:16px;font-weight:500}
+.fei-note{font-size:12px;color:var(--txt2);margin-top:4px}
+.fei-date{font-size:10px;color:var(--txt3);font-family:var(--font-num)}
+/* cat filter tabs in finance */
+.cat-filter{display:flex;padding:0 20px 10px;gap:8px;overflow-x:auto;scrollbar-width:none}
+.cat-filter::-webkit-scrollbar{display:none}
+.cat-ftab{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);font-family:var(--font-head);font-size:10px;font-weight:700;cursor:pointer;background:var(--card2);color:var(--txt2);white-space:nowrap;flex-shrink:0;transition:.2s}
+.cat-ftab.active{border-color:#4f46e5;color:#4f46e5;background:rgba(79,70,229,.1)}
+/* budget edit */
+.bgt-edit-row{display:flex;gap:8px;margin-top:8px}
+.bgt-inp{flex:1;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--txt);font-family:var(--font-num);font-size:14px;padding:9px 12px;outline:none}
+.bgt-inp:focus{border-color:var(--gr)}
+
+/* ── CYCLE ── */
+.cal-grid-c{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cdh{text-align:center;font-size:9px;font-family:var(--font-head);font-weight:700;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase;padding:3px 0}
+.cday{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:12px;font-family:var(--font-num);cursor:pointer;transition:.15s}
+.cday:hover{background:var(--bg2)}
+.cday.period{background:rgba(224,54,140,.18);color:var(--pk);font-weight:700}
+.cday.ovulation{background:rgba(34,160,107,.18);color:var(--gr)}
+.cday.fertile{background:rgba(46,126,240,.12);color:var(--bl)}
+.cday.predicted{border:1.5px dashed var(--pk);color:var(--pk);opacity:.65}
+.cday.today-c{outline:2.5px solid var(--or);outline-offset:1px}
+.symtag{padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:.2s;border:1.5px solid var(--border);background:transparent;color:var(--txt2)}
+.symtag.active{background:var(--pks);border-color:var(--pk);color:var(--pk)}
+.symwrap{display:flex;flex-wrap:wrap;gap:6px}
+
+/* ── PROFILE / SETTINGS ── */
+.prof-hero{margin:0 20px 14px;border-radius:var(--r2);padding:20px;background:linear-gradient(135deg,#2e7ef0,#7c3aed);box-shadow:0 6px 28px rgba(46,126,240,.28);position:relative;overflow:hidden}
+.prof-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.07)}
+.av{width:62px;height:62px;border-radius:50%;border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:28px;background:rgba(255,255,255,.15);margin-bottom:10px}
+.pmgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:0 20px 14px}
+.pmcard{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);padding:13px 10px;text-align:center;box-shadow:var(--sh)}
+.pmv{font-family:var(--font-num);font-size:19px;font-weight:500;letter-spacing:-.01em}
+.pml{font-size:10px;color:var(--txt2);margin-top:3px}
+.bscale{height:8px;border-radius:4px;background:linear-gradient(90deg,#2e7ef0,#22a06b,#d4820a,#dc2626);margin:10px 0 4px;position:relative}
+.barrow{position:absolute;top:-5px;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--txt);transform:translateX(-50%);transition:left .8s;box-shadow:var(--sh)}
+.stng{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 15px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--sh)}
+.slbl2{font-size:14px;font-weight:500}
+.ssub{font-size:11px;color:var(--txt3);margin-top:1px}
+.tog{width:44px;height:26px;border-radius:13px;background:#e0cfc0;position:relative;cursor:pointer;transition:background .3s;flex-shrink:0}
+.tog.on{background:var(--or)}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tog.on::after{left:21px}
+.btn-out{background:var(--card);border:1.5px solid var(--border2);border-radius:12px;color:var(--txt2);font-family:var(--font-head);font-size:12px;font-weight:700;padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;margin-bottom:8px;box-shadow:var(--sh)}
+.hmc{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);margin-bottom:11px;overflow:hidden;box-shadow:var(--sh)}
+.hmhdr{padding:12px 15px;background:var(--bg2);display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--border)}
+.hmhdr-t{font-family:var(--font-head);font-size:13px;font-weight:700}
+.hrow{display:flex;align-items:center;gap:10px;padding:10px 15px;border-bottom:1px solid var(--border)}
+.hrn{flex:1;font-size:13px;color:var(--txt2)}
+.bdel{background:var(--res);border:none;border-radius:7px;color:var(--re);width:27px;height:27px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px}
+.addrow{display:flex;gap:8px;padding:10px 15px;flex-wrap:wrap}
+.addinp{flex:1;min-width:0;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;color:var(--txt);font-family:var(--font-body);font-size:13px;padding:8px 12px;outline:none}
+.addinp:focus{border-color:var(--or)}
+.btnadd{background:var(--or);border:none;border-radius:9px;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:700;padding:8px 12px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+
+/* ── APPEARANCE ── */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.theme-opt{border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;border:2px solid transparent;transition:.2s;box-shadow:var(--sh)}
+.theme-opt.sel{border-color:var(--or)}
+.theme-opt-name{font-family:var(--font-head);font-size:11px;font-weight:700;margin-top:6px}
+.font-grid{display:flex;flex-direction:column;gap:8px}
+.font-opt{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:.15s;box-shadow:var(--sh);display:flex;align-items:center;justify-content:space-between}
+.font-opt.sel{border-color:var(--or);background:var(--ors)}
+.font-opt-name{font-size:14px;font-weight:600}
+.font-opt-preview{font-size:12px;color:var(--txt3)}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(26,17,10,.45);z-index:200;display:none;align-items:flex-end}
+.overlay.show{display:flex}
+.sheet{background:var(--card);border-radius:var(--r2) var(--r2) 0 0;padding:20px 20px calc(22px + env(safe-area-inset-bottom));width:100%;max-height:88vh;overflow-y:auto}
+.sht{font-family:var(--font-head);font-size:18px;font-weight:800;margin-bottom:16px}
+.egrid{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-bottom:12px}
+.eopt{font-size:21px;text-align:center;padding:5px 0;border-radius:9px;cursor:pointer;border:2px solid transparent;transition:.15s}
+.eopt.sel{background:var(--ors);border-color:var(--or)}
+.cgrid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.copt{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:.15s;box-shadow:var(--sh)}
+.copt.sel{border-color:var(--txt);transform:scale(1.12)}
+.macts{display:flex;gap:10px;margin-top:8px}
+.btncancel{flex:1;background:var(--bg2);border:1.5px solid var(--border2);border-radius:12px;color:var(--txt2);font-family:var(--font-head);font-size:13px;font-weight:700;padding:12px;cursor:pointer}
+.btnok{flex:2;background:var(--or);border:none;border-radius:12px;color:#fff;font-family:var(--font-head);font-size:13px;font-weight:700;padding:12px;cursor:pointer;box-shadow:0 3px 10px rgba(244,115,42,.3)}
+.tmodal{position:fixed;inset:0;background:rgba(26,17,10,.5);z-index:300;display:none;align-items:flex-end}
+.tmodal.show{display:flex}
+.tsheet{background:var(--card);border-radius:var(--r2) var(--r2) 0 0;padding:20px 20px calc(22px + env(safe-area-inset-bottom));width:100%;max-height:84vh;overflow-y:auto}
+
+/* ── FORMS ── */
+.flbl{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;display:block}
+.finp{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:12px;color:var(--txt);font-family:var(--font-body);font-size:14px;padding:10px 12px;outline:none;transition:border-color .2s}
+.finp:focus{border-color:var(--bl)}
+.frow{display:flex;gap:10px}
+.fgrp{flex:1;margin-bottom:11px}
+.footer-note{text-align:center;padding:14px 0 4px;color:var(--txt3);font-size:11px;font-family:var(--font-head)}
+
+/* ── INSTALL PROMPT ── */
+.install-banner{margin:0 20px 12px;background:linear-gradient(135deg,var(--bl),var(--pu));border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.install-banner-txt{flex:1;color:#fff;font-size:13px;line-height:1.4}
+.install-btn{background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.5);border-radius:10px;color:#fff;font-family:var(--font-head);font-size:11px;font-weight:700;padding:8px 12px;cursor:pointer;white-space:nowrap}
+
+/* ── BACK DATE ENTRY ── */
+.backdate-section{margin:0 20px 12px}
+.bd-tabs{display:flex;gap:8px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none}
+.bd-tabs::-webkit-scrollbar{display:none}
+.bd-tab{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);font-family:var(--font-head);font-size:11px;font-weight:700;cursor:pointer;background:var(--card);color:var(--txt2);white-space:nowrap;flex-shrink:0;box-shadow:var(--sh);transition:.2s}
+.bd-tab.active{background:var(--pu);border-color:var(--pu);color:#fff}
+
+/* ── PWA hint ── */
+.pwa-card{margin:0 20px 12px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:var(--r2);padding:16px;color:#fff}
+.pwa-steps{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.pwa-step{font-size:13px;color:rgba(255,255,255,.9);display:flex;align-items:center;gap:8px}
+</style>
+</head>
+<body>
+
+<!-- ══ HAMBURGER BTN ══ -->
+<div class="hmenu-btn" onclick="openHMenu()">☰</div>
+
+<!-- ══ HAMBURGER DRAWER ══ -->
+<div class="hmenu-overlay" id="hmenu-overlay" onclick="closeHMenu()"></div>
+<div class="hmenu-drawer" id="hmenu-drawer">
+  <div class="hmenu-head">
+    <div class="hmenu-avatar" id="hm-avatar">🧑</div>
+    <div class="hmenu-name" id="hm-name">Your Name</div>
+    <div class="hmenu-tag" id="hm-tag">Set up your profile</div>
+    <div style="margin-top:6px;font-family:var(--font-num);font-size:10px;color:rgba(255,255,255,.5)" id="hm-pid"></div>
+    <button class="hmenu-close" onclick="closeHMenu()">✕</button>
+  </div>
+  <div class="hmenu-items">
+    <div class="hmenu-item" onclick="closeHMenu();showPage('profile',null)">
+      <div class="hmenu-item-icon">👤</div>
+      <div><div class="hmenu-item-txt">My Profile</div><div class="hmenu-item-sub">Health stats & goals</div></div>
+    </div>
+    <div class="hmenu-item" onclick="closeHMenu();showPage('appearance',null)">
+      <div class="hmenu-item-icon">🎨</div>
+      <div><div class="hmenu-item-txt">Appearance</div><div class="hmenu-item-sub">Theme, font & colors</div></div>
+    </div>
+    <div class="hmenu-item" onclick="closeHMenu();showPage('settings',null)">
+      <div class="hmenu-item-icon">⚙️</div>
+      <div><div class="hmenu-item-txt">Settings</div><div class="hmenu-item-sub">Sections, habits, data</div></div>
+    </div>
+    <div class="hmenu-item" onclick="closeHMenu();showPwa()">
+      <div class="hmenu-item-icon">📱</div>
+      <div><div class="hmenu-item-txt">Add to Home Screen</div><div class="hmenu-item-sub">Install as app</div></div>
+    </div>
+    <div class="hmenu-item" onclick="exportData()">
+      <div class="hmenu-item-icon">📤</div>
+      <div><div class="hmenu-item-txt">Export Data</div><div class="hmenu-item-sub">Download JSON backup</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TODAY ══════ -->
+<div class="page active" id="page-today">
+  <div class="ph">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div style="flex:1;min-width:0;padding-right:8px">
+        <div style="font-size:20px;font-weight:800;font-family:var(--font-head);color:var(--txt);line-height:1.2" id="greeting">Good morning ☀️</div>
+        <div class="ps" id="datedisp" style="margin-top:2px"></div>
+      </div>
+      <div style="text-align:right;padding-top:2px;margin-right:48px;flex-shrink:0">
+        <div style="font-family:var(--font-head);font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:.1em;font-weight:700">Streak</div>
+        <div style="font-family:var(--font-num);font-size:22px;font-weight:500;color:var(--or)" id="streakdisp">0🔥</div>
+      </div>
+    </div>
+    <!-- Inner tab switcher -->
+    <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+      <button class="ptab active" id="today-tab-btn" onclick="setTodayTab('today')">Today</button>
+      <button class="ptab" id="insights-tab-btn" onclick="setTodayTab('insights')">Insights 📊</button>
+      <button onclick="toggleDateJump()" title="Jump to date" style="margin-left:auto;background:var(--card);border:1.5px solid var(--border2);border-radius:10px;color:var(--pu);font-size:15px;width:34px;height:34px;cursor:pointer;flex-shrink:0;box-shadow:var(--sh)">📅</button>
+    </div>
+  </div>
+
+  <!-- TODAY CONTENT -->
+  <div id="today-tab-content">
+    <div class="dstrip" id="datestrip"></div>
+    <!-- Date jump panel -->
+    <div id="date-jump-panel" style="display:none;margin:0 20px 10px">
+      <div style="background:var(--pus);border:1.5px solid var(--pu);border-radius:14px;padding:12px 16px">
+        <div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--pu);letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px">Jump to Date</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="finp" id="date-jump-inp" type="date" style="font-family:var(--font-num);flex:1;border-color:var(--pu)" min="2025-01-01">
+          <button class="btn" style="background:var(--pu);box-shadow:none;white-space:nowrap" onclick="jumpToDate()">Go ✓</button>
+          <button onclick="document.getElementById('date-jump-panel').style.display='none'" style="background:none;border:none;color:var(--pu);cursor:pointer;font-size:18px;padding:0 4px">✕</button>
+        </div>
+        <div style="font-size:11px;color:var(--pu);margin-top:6px;opacity:.7">Tap any date in the strip to edit that day's habits</div>
+      </div>
+    </div>
+    <div class="edit-banner" id="edit-banner">
+      <div class="edit-banner-txt" id="edit-banner-txt">✏️ Editing past date</div>
+      <button class="edit-banner-close" onclick="exitEdit()">Back to Today</button>
+    </div>
+    <div class="score-hero">
+      <div class="sh-lbl">Today's Productivity</div>
+      <div class="sh-val" id="todayscore">0%</div>
+      <div class="sh-desc" id="todaydesc">No habits done yet — let's go!</div>
+      <div class="sh-bar"><div class="sh-fill" id="todaybar" style="width:0%"></div></div>
+    </div>
+    <!-- mini stats + 7-day chart merged here -->
+    <div class="today-chart-wrap">
+      <div class="today-stats-row">
+        <div class="tsc"><div class="tsc-v" id="t-streak" style="color:var(--or)">0🔥</div><div class="tsc-l">Streak</div></div>
+        <div class="tsc"><div class="tsc-v" id="t-avg" style="color:var(--gr)">—%</div><div class="tsc-l">7-Day Avg</div></div>
+        <div class="tsc"><div class="tsc-v" id="t-best" style="color:var(--pu)">—%</div><div class="tsc-l">Best Day</div></div>
+      </div>
+      <div class="ccrd" style="margin:0">
+        <div class="ctitle">This Week</div>
+        <div class="bchart" id="week-chart" style="height:80px"></div>
+      </div>
+    </div>
+    <div class="card cp qcard" id="qcard" style="margin:12px 20px">
+      <div class="qt" id="qtext">"Small daily improvements lead to staggering long-term results."</div>
+      <div class="qa" id="qauth">— Unknown</div>
+    </div>
+    <div class="secs" id="secswrap"></div>
+  </div>
+
+  <!-- INSIGHTS CONTENT (embedded) -->
+  <div id="insights-tab-content" style="display:none">
+    <div class="ptabs" id="stats-period-tabs">
+      <button class="ptab active" onclick="setPeriod('week',this)">Week</button>
+      <button class="ptab" onclick="setPeriod('month',this)">Month</button>
+      <button class="ptab" onclick="setPeriod('year',this)">Year</button>
+    </div>
+    <div class="sgrid">
+      <div class="scard"><div class="sv" id="s-avg" style="color:var(--or)">—</div><div class="sl">Avg Score</div></div>
+      <div class="scard"><div class="sv" id="s-streak" style="color:var(--gr)">0🔥</div><div class="sl">Best Streak</div></div>
+      <div class="scard"><div class="sv" id="s-total" style="color:var(--ye)">0</div><div class="sl">Total Done</div></div>
+      <div class="scard"><div class="sv" id="s-best" style="color:var(--pu)">—</div><div class="sl">Best Day</div></div>
+    </div>
+    <!-- Completion Rate with its OWN period selector -->
+    <div class="ccrd">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="ctitle" style="margin-bottom:0">Completion Rate</div>
+        <div style="display:flex;gap:5px">
+          <button class="ptab active" style="padding:4px 10px;font-size:10px" onclick="setCompPeriod('week',this)">W</button>
+          <button class="ptab" style="padding:4px 10px;font-size:10px" onclick="setCompPeriod('month',this)">M</button>
+          <button class="ptab" style="padding:4px 10px;font-size:10px" onclick="setCompPeriod('year',this)">Y</button>
+        </div>
+      </div>
+      <div class="bchart" id="main-chart" style="height:100px"></div>
+    </div>
+    <!-- Section Breakdown with its OWN section selector -->
+    <div class="ccrd">
+      <div class="ctitle" style="margin-bottom:10px">Section Breakdown</div>
+      <div class="stabs" id="sec-filter"></div>
+      <div class="bchart" id="sec-chart" style="height:90px"></div>
+      <div style="margin-top:12px"><div class="ctitle">Today's Progress</div><div id="sec-breakdown"></div></div>
+    </div>
+    <!-- Heatmap with section pills -->
+    <div class="ccrd">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="ctitle" style="margin-bottom:0">Year Heatmap</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap" id="hm-pills"></div>
+      </div>
+      <div style="font-size:11px;color:var(--txt3);margin-bottom:10px">Tap section to filter</div>
+      <div class="hm-wrap"><canvas id="hm-canvas" style="border-radius:8px"></canvas></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+        <div class="leg"><div class="leg-dot" style="background:var(--bg2);border:1px solid var(--border)"></div>None</div>
+        <div class="leg"><div class="leg-dot" id="leg1"></div>25%</div>
+        <div class="leg"><div class="leg-dot" id="leg2"></div>50%</div>
+        <div class="leg"><div class="leg-dot" id="leg3"></div>75%</div>
+        <div class="leg"><div class="leg-dot" id="leg4"></div>100%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════ MEALS ══════ -->
+<div class="page" id="page-meals">
+  <div class="ph"><div class="pt">Junk Log 🍕</div><div class="ps">Track what you ate unnecessarily</div></div>
+  <div style="padding:0 20px 10px;display:flex;gap:8px">
+    <button class="ptab active" onclick="setMealView('log',this)">Log</button>
+    <button class="ptab" onclick="setMealView('day',this)">Day</button>
+    <button class="ptab" onclick="setMealView('month',this)">Month</button>
+    <button class="ptab" onclick="setMealView('year',this)">Year</button>
+  </div>
+  <div id="meal-log-view">
+    <div class="card cp" style="margin:0 20px 14px">
+      <div class="slbl">Log junk / cheat meal</div>
+      <div style="margin-bottom:8px">
+        <input class="finp" id="meal-date-inp" type="date" style="font-family:var(--font-num);margin-bottom:8px">
+        <input class="finp" id="meal-inp" placeholder="What did you eat? e.g. Pizza, Momo, Chaat…" style="margin-bottom:8px">
+        <div class="frow" style="gap:8px">
+          <div class="fgrp" style="margin-bottom:0"><label class="flbl">Category</label>
+            <select class="finp" id="meal-cat" style="padding:9px 12px">
+              <option value="junk">🍕 Junk Food</option>
+              <option value="sweet">🍬 Sweet / Dessert</option>
+              <option value="fried">🍟 Fried</option>
+              <option value="outside">🏪 Outside / Street</option>
+              <option value="binge">🫠 Late Night Binge</option>
+              <option value="other">😅 Other</option>
+            </select>
+          </div>
+          <div class="fgrp" style="margin-bottom:0"><label class="flbl">Guilt (1-10)</label>
+            <input class="finp" id="meal-guilt" type="number" min="1" max="10" placeholder="5" style="font-family:var(--font-num)">
+          </div>
+        </div>
+      </div>
+      <button class="btn" style="width:100%;margin-top:8px" onclick="saveMeal()">Add to Log ✓</button>
+    </div>
+    <div style="padding:0 20px"><div class="slbl">Recent</div><div id="mealslist"></div></div>
+  </div>
+  <div id="meal-stats-view" style="display:none;padding:0 20px">
+    <div id="meal-stats-content"></div>
+  </div>
+</div>
+
+<!-- ══════ MILK ══════ -->
+<div class="page" id="page-milk">
+  <div class="ph"><div class="pt">Milk Hisab 🥛</div><div class="ps">Daily milk tracking</div></div>
+  <div class="milk-hero">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <button onclick="milkPrev()" style="background:rgba(255,255,255,.15);border:none;border-radius:9px;color:#fff;width:32px;height:32px;font-size:16px;cursor:pointer;position:relative;z-index:3">‹</button>
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700;color:#fff" id="milk-title"></div>
+      <button id="milk-next-btn" onclick="milkNext()" style="background:rgba(255,255,255,.15);border:none;border-radius:9px;color:#fff;width:32px;height:32px;font-size:16px;cursor:pointer;position:relative;z-index:3">›</button>
+    </div>
+    <div class="milk-grid">
+      <div class="milk-dh">S</div><div class="milk-dh">M</div><div class="milk-dh">T</div><div class="milk-dh">W</div><div class="milk-dh">T</div><div class="milk-dh">F</div><div class="milk-dh">S</div>
+    </div>
+    <div class="milk-grid" id="milk-grid"></div>
+    <div class="milk-stat-row">
+      <div class="milk-stat"><div class="milk-stat-v" id="milk-days">0</div><div class="milk-stat-l">Days</div></div>
+      <div class="milk-stat"><div class="milk-stat-v" id="milk-liters">0L</div><div class="milk-stat-l">Total Vol.</div></div>
+      <div class="milk-stat"><div class="milk-stat-v" id="milk-amt">₹0</div><div class="milk-stat-l">Amount</div></div>
+      <div class="milk-stat"><div class="milk-stat-v" id="milk-pend">₹0</div><div class="milk-stat-l">Pending</div></div>
+    </div>
+  </div>
+  <div class="card cp" style="margin:0 20px 14px">
+    <div class="slbl">Settings</div>
+    <div class="frow">
+      <div class="fgrp"><label class="flbl">Price per Litre (₹)</label><input class="finp" id="milk-rate" type="number" placeholder="70" oninput="saveMilkSettings()" style="font-family:var(--font-num)"></div>
+      <div class="fgrp"><label class="flbl">Default Qty</label>
+        <select class="finp" id="milk-def-qty" onchange="saveMilkSettings()" style="padding:9px 12px">
+          <option value="250">250ml</option><option value="500" selected>500ml</option><option value="750">750ml</option><option value="1000">1L</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <button class="btn" style="flex:1" onclick="markMilkToday()">Mark Today 🥛</button>
+      <button class="btn-sec" style="flex:1;border-radius:12px" onclick="markMilkPaid()">Mark Paid ✓</button>
+    </div>
+  </div>
+  <div style="padding:0 20px"><div class="slbl">Monthly History</div><div id="milk-history"></div></div>
+</div>
+
+<!-- ══════ SHOPPING LIST ══════ -->
+<div class="page" id="page-shop">
+  <div class="ph"><div class="pt">Shopping List 🛒</div><div class="ps">What to buy this month</div></div>
+  <div class="shop-month-tabs" id="shop-month-tabs"></div>
+  <!-- hero summary -->
+  <div class="shop-hero">
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.14em;text-transform:uppercase">This Month</div>
+    <div style="display:flex;align-items:flex-end;gap:16px;margin-top:4px">
+      <div>
+        <div style="font-family:var(--font-num);font-size:42px;font-weight:500;color:#fff;line-height:1;letter-spacing:-.02em" id="shop-done-count">0/0</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.7);margin-top:3px">items bought</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-family:var(--font-num);font-size:18px;font-weight:500;color:#fff" id="shop-total-est">₹0</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6)">estimated total</div>
+        <div style="height:5px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:8px">
+          <div style="height:100%;border-radius:3px;background:rgba(255,255,255,.9);transition:width .8s ease" id="shop-progress-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- add item -->
+  <div class="card cp shop-add-card">
+    <div class="slbl">Add Item</div>
+    <div style="margin-bottom:8px"><input class="finp" id="shop-item-name" placeholder="e.g. Shampoo, Groceries, Clothes…" onkeydown="if(event.key==='Enter')addShopItem()"></div>
+    <div class="frow" style="margin-bottom:10px">
+      <div class="fgrp"><label class="flbl">Est. Price (₹)</label><input class="finp" id="shop-item-price" type="number" placeholder="Optional" style="font-family:var(--font-num)"></div>
+      <div class="fgrp"><label class="flbl">Priority</label>
+        <select class="finp" id="shop-item-priority" style="padding:9px 12px">
+          <option value="normal">Normal</option>
+          <option value="urgent">Urgent 🔴</option>
+          <option value="optional">Optional</option>
+        </select>
+      </div>
+    </div>
+    <div class="slbl" style="margin-bottom:6px">Category</div>
+    <div class="shop-cat-grid" id="shop-cat-pills"></div>
+    <button class="btn" style="width:100%;background:var(--pu);box-shadow:0 3px 10px rgba(124,58,237,.3)" onclick="addShopItem()">Add to List ➕</button>
+  </div>
+  <!-- filter + list -->
+  <div class="shop-filter-row" id="shop-filters"></div>
+  <div style="padding:0 20px"><div id="shop-list"></div></div>
+</div>
+
+<!-- ══════ FINANCE ══════ -->
+<div class="page" id="page-finance">
+  <div class="ph"><div class="pt">Finance 💰</div><div class="ps">Track spending & budgets</div></div>
+  <div class="fin-mtabs" id="fin-month-tabs"></div>
+  <!-- budget hero -->
+  <div class="fin-hero">
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.14em;text-transform:uppercase">Monthly Spent</div>
+    <div style="font-family:var(--font-num);font-size:44px;font-weight:500;color:#fff;line-height:1;margin:4px 0;letter-spacing:-.02em" id="fin-spent">₹0</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.75)" id="fin-bgt-desc">of ₹0 budget</div>
+    <div style="height:5px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:12px">
+      <div style="height:100%;border-radius:3px;transition:width 1s ease;background:rgba(255,255,255,.9)" id="fin-bbar"></div>
+    </div>
+    <!-- budget is auto-sum of category budgets — no manual input needed -->
+    <div style="margin-top:10px;font-size:11px;color:rgba(255,255,255,.55);font-family:var(--font-head);font-weight:700;letter-spacing:.07em;text-transform:uppercase">Total = sum of category budgets</div>
+    <div class="fin-ring-wrap">
+      <svg width="50" height="50" viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="6"/>
+        <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="6" stroke-linecap="round" stroke-dasharray="151" id="fin-ring" stroke-dashoffset="151" transform="rotate(-90 30 30)"/>
+      </svg>
+      <div style="position:relative;display:inline-flex;align-items:center;justify-content:center">
+        <div style="font-family:var(--font-num);font-size:14px;font-weight:500;color:#fff" id="fin-ring-pct">0%</div>
+      </div>
+      <div class="fin-ring-label" id="fin-bgt-total"></div>
+    </div>
+  </div>
+  <!-- category cards -->
+  <div class="fin-cat-grid" id="fin-cat-grid"></div>
+  <!-- tap card to add expense - shown as hidden modal trigger -->
+  <div style="padding:0 20px 6px;display:flex;align-items:center;justify-content:space-between">
+    <div class="slbl" style="margin-bottom:0">Transactions</div>
+    <button class="btn" style="padding:7px 14px;font-size:11px" onclick="openAddExpense(null)">+ Add</button>
+  </div>
+  <div class="cat-filter" id="cat-filter-tabs"></div>
+  <div style="padding:0 20px"><div id="fin-entries"></div></div>
+</div>
+
+<!-- ══════ CYCLE ══════ -->
+<div class="page" id="page-cycle">
+  <div class="ph"><div class="pt">Cycle Tracker 🌸</div><div class="ps">Understand your rhythm</div></div>
+  <div class="card cp" style="margin:0 20px 14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <button class="btn-sec" style="border-radius:10px;padding:8px 13px" onclick="changeMonth(-1)">‹</button>
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700" id="calmonth"></div>
+      <button class="btn-sec" style="border-radius:10px;padding:8px 13px" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="cal-grid-c"><div class="cdh">S</div><div class="cdh">M</div><div class="cdh">T</div><div class="cdh">W</div><div class="cdh">T</div><div class="cdh">F</div><div class="cdh">S</div></div>
+    <div class="cal-grid-c" id="calgrid"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+      <div class="leg"><div class="leg-dot" style="background:rgba(224,54,140,.4)"></div>Period</div>
+      <div class="leg"><div class="leg-dot" style="background:rgba(34,160,107,.4)"></div>Ovulation</div>
+      <div class="leg"><div class="leg-dot" style="background:rgba(46,126,240,.3)"></div>Fertile</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 20px 14px">
+    <div class="scard"><div class="sv" id="cylength" style="color:var(--pk)">28</div><div class="sl">Cycle Days</div></div>
+    <div class="scard"><div class="sv" id="perlength" style="color:var(--bl)">5</div><div class="sl">Period Length</div></div>
+  </div>
+  <div style="padding:0 20px;display:flex;flex-direction:column;gap:11px">
+    <div class="card cp"><div class="slbl">Symptoms Today</div><div class="symwrap" id="symtags"></div></div>
+    <div class="card cp"><div class="slbl">Mood Today</div><div class="symwrap" id="moodtags"></div></div>
+    <div class="card cp"><div class="slbl">Next Period</div><div style="font-family:var(--font-num);font-size:16px;font-weight:500" id="nextper">—</div><div style="font-size:11px;color:var(--txt3);margin-top:3px" id="nextsub">Log your period to get predictions</div></div>
+    <div class="card cp" style="margin-bottom:4px"><div class="slbl">Hormone Phase</div><div style="font-size:15px;font-weight:600" id="hphase">—</div><div style="font-size:12px;color:var(--txt2);margin-top:4px;line-height:1.5" id="hdesc">Log your cycle for phase info</div></div>
+  </div>
+</div>
+
+<!-- ══════ PROFILE ══════ -->
+<div class="page" id="page-profile">
+  <div class="ph"><div class="pt">My Profile 👤</div><div class="ps">Health at a glance</div></div>
+  <div class="prof-hero">
+    <div class="av" id="pav">🧑</div>
+    <div style="font-family:var(--font-head);font-size:20px;font-weight:800;color:#fff" id="pnm">Your Name</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.65);margin-top:3px" id="ptg">Set up below</div>
+    <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);text-align:center">
+      <div style="font-family:var(--font-num);font-size:28px;font-weight:500;color:#fff" id="hscore">—</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.6);font-family:var(--font-head);font-weight:700;text-transform:uppercase;letter-spacing:.06em">Health<br>Score</div>
+    </div>
+  </div>
+  <div class="pmgrid">
+    <div class="pmcard"><div class="pmv" id="bmi-v" style="color:var(--bl)">—</div><div class="pml">BMI</div></div>
+    <div class="pmcard"><div class="pmv" id="ibw-v" style="color:var(--gr)">—</div><div class="pml">Ideal Wt</div></div>
+    <div class="pmcard"><div class="pmv" id="tdee-v" style="color:var(--ye)">—</div><div class="pml">TDEE kcal</div></div>
+  </div>
+  <div class="card cp" style="margin:0 20px 14px">
+    <div class="slbl">BMI Scale</div>
+    <div style="font-size:20px;font-weight:700;font-family:var(--font-head)" id="bmicat">—</div>
+    <div class="bscale"><div class="barrow" id="bmarrow" style="left:50%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--txt3);font-family:var(--font-head);font-weight:700"><span>Under</span><span>Normal</span><span>Over</span><span>Obese</span></div>
+  </div>
+  <div class="card cp" style="margin:0 20px 14px">
+    <div class="slbl">AI Health Insight</div>
+    <div class="ainsight" style="border-color:var(--bl)" id="hlth-insight">Fill in your details below.</div>
+    <button class="btn" style="margin-top:10px;width:100%;background:var(--bl);box-shadow:0 3px 10px rgba(46,126,240,.3)" onclick="getHlthInsight()">Get AI Insight ✨</button>
+  </div>
+  <div style="padding:0 20px 8px">
+    <div class="slbl">Your Details</div>
+    <div class="frow"><div class="fgrp"><label class="flbl">Name</label><input class="finp" id="pf-name" placeholder="Your name" oninput="saveProf()"></div>
+    <div class="fgrp"><label class="flbl">Avatar</label><select class="finp" id="pf-av" onchange="saveProf()" style="padding:9px 12px"><option>🧑</option><option>👩</option><option>🧔</option><option>👧</option><option>🧒</option><option>🦸</option><option>🧘</option><option>👨‍💻</option></select></div></div>
+    <div class="frow"><div class="fgrp"><label class="flbl">Age</label><input class="finp" id="pf-age" type="number" placeholder="25" oninput="saveProf();calcHealth()"></div>
+    <div class="fgrp"><label class="flbl">Gender</label><select class="finp" id="pf-gen" onchange="saveProf();calcHealth()" style="padding:9px 12px"><option value="female">Female</option><option value="male">Male</option><option value="other">Other</option></select></div></div>
+    <div class="frow"><div class="fgrp"><label class="flbl">Height (cm)</label><input class="finp" id="pf-ht" type="number" placeholder="165" oninput="saveProf();calcHealth()"></div>
+    <div class="fgrp"><label class="flbl">Weight (kg)</label><input class="finp" id="pf-wt" type="number" placeholder="60" oninput="saveProf();calcHealth()"></div></div>
+    <div class="fgrp"><label class="flbl">Activity Level</label><select class="finp" id="pf-act" onchange="saveProf();calcHealth()" style="padding:9px 12px"><option value="1.2">Sedentary</option><option value="1.375">Lightly active</option><option value="1.55" selected>Moderately active</option><option value="1.725">Very active</option><option value="1.9">Athlete</option></select></div>
+    <div class="fgrp"><label class="flbl">Goal</label><select class="finp" id="pf-goal" onchange="saveProf()" style="padding:9px 12px"><option value="lose">Lose weight</option><option value="maintain" selected>Maintain</option><option value="gain">Gain muscle</option></select></div>
+  </div>
+</div>
+
+<!-- ══════ APPEARANCE ══════ -->
+<div class="page" id="page-appearance">
+  <div class="ph"><div class="pt">Appearance 🎨</div><div class="ps">Make it yours</div></div>
+  <div class="card cp" style="margin:0 20px 14px">
+    <div class="slbl">Theme</div>
+    <div class="theme-grid" id="theme-grid"></div>
+  </div>
+  <div class="card cp" style="margin:0 20px 14px">
+    <div class="slbl">Font</div>
+    <div class="font-grid" id="font-grid"></div>
+  </div>
+  <div class="card cp" style="margin:0 20px 14px">
+    <div class="slbl">Accent Color</div>
+    <div id="accent-grid" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px"></div>
+  </div>
+</div>
+
+<!-- ══════ SETTINGS ══════ -->
+<div class="page" id="page-settings">
+  <div class="ph"><div class="pt">Settings ⚙️</div><div class="ps">Customize LifePulse</div></div>
+  <div style="padding:0 20px">
+    <div class="slbl">Active Sections</div>
+    <div id="sec-toggles"></div>
+    <button class="btn-out" onclick="openNewSec()" style="color:var(--or);border-color:var(--ors2);margin-bottom:14px">➕ Create new section</button>
+    <div class="slbl">Finance Categories</div>
+    <div id="fin-cat-settings"></div>
+    <button class="btn-out" onclick="openNewFinCat()" style="color:var(--gr);border-color:var(--grs);margin-bottom:14px">➕ Add finance category</button>
+    <div class="slbl">Manage Habits</div>
+    <div id="habit-mgr"></div>
+    <div class="slbl">Shopping List Categories</div>
+    <div id="shop-cat-settings"></div>
+    <div class="addrow" style="margin-bottom:14px">
+      <input class="addinp" id="shop-cat-new-inp" placeholder="New category name…" onkeydown="if(event.key==='Enter')addShopCat()">
+      <button class="btnadd" onclick="addShopCat()">+ Add</button>
+    </div>
+    <div class="slbl">Preferences</div>
+    <div class="stng"><div><div class="slbl2">Menstrual Tracker</div><div class="ssub">Show cycle tab in nav</div></div><div class="tog on" id="cyc-tog" onclick="this.classList.toggle('on');savePrefs()"></div></div>
+    <div class="stng"><div><div class="slbl2">Daily Quotes</div><div class="ssub">Show motivational quote</div></div><div class="tog on" id="qt-tog" onclick="this.classList.toggle('on');savePrefs()"></div></div>
+    <div style="height:8px"></div>
+
+    <!-- ── BACKUP & RESTORE ── -->
+    <div class="slbl">Your Profile</div>
+    <div class="profile-chip" id="settings-profile-chip">
+      <div style="font-family:var(--font-head);font-size:16px;font-weight:800" id="settings-profile-name">—</div>
+      <div style="font-size:11px;opacity:.75;margin-top:2px">Save your Profile ID to restore data on a new device</div>
+      <div class="profile-chip-id" id="settings-profile-id">
+        <span id="settings-profile-id-txt">—</span>
+        <button class="profile-chip-copy" onclick="copyProfileId()">Copy</button>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--txt2);line-height:1.65;margin-bottom:14px;padding:0 2px">
+      🔑 <strong>Write this down or screenshot it.</strong> If you clear browser data or switch phones, open the app → tap "Restore your profile" → enter this ID → your data returns instantly (as long as you've exported a backup below).
+    </div>
+    <div class="slbl">Backup & Restore 🔐</div>
+    <div class="card cp" style="margin-bottom:12px;border-color:var(--grs)">
+      <div style="font-size:12px;color:var(--txt2);line-height:1.65;margin-bottom:12px">
+        Your data lives in your browser. <strong>Back up regularly</strong> — especially before clearing browser data or switching devices. GitHub Backup saves directly to your repo and is versioned forever.
+      </div>
+      <!-- storage meter -->
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em">Storage Used</div>
+          <div style="font-family:var(--font-num);font-size:12px;color:var(--txt2)" id="storage-meter-lbl">—</div>
+        </div>
+        <div style="height:6px;border-radius:4px;background:var(--bg2);overflow:hidden">
+          <div id="storage-meter-bar" style="height:100%;border-radius:4px;background:var(--gr);transition:width .6s ease;width:0%"></div>
+        </div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:4px">localStorage limit ~5MB · comfortably fits 5–10 years of data</div>
+      </div>
+      <!-- local export/import row -->
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button class="btn" style="flex:1;background:var(--gr);box-shadow:0 3px 10px rgba(34,160,107,.25)" onclick="exportData()">⬇️ Export JSON</button>
+        <button class="btn" style="flex:1;background:var(--or)" onclick="document.getElementById('import-file-inp').click()">⬆️ Import JSON</button>
+        <input type="file" id="import-file-inp" accept=".json" style="display:none" onchange="importDataFile(this)">
+      </div>
+      <div style="font-size:11px;color:var(--txt3);margin-bottom:14px;line-height:1.5">
+        <strong>Export</strong> = download a .json file of everything · <strong>Import</strong> = restore from that file (merges intelligently, won't erase new data)
+      </div>
+      <!-- github backup section -->
+      <div style="border-top:1px solid var(--border);padding-top:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="font-size:16px">🐙</div>
+          <div>
+            <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--txt)">GitHub Auto-Backup</div>
+            <div style="font-size:11px;color:var(--txt3)">Saves your data.json directly to your repo — versioned, free, recoverable from any device</div>
+          </div>
+        </div>
+        <div class="fgrp" style="margin-bottom:8px">
+          <label class="flbl">GitHub Username</label>
+          <input class="finp" id="gh-user" placeholder="e.g. rahul123" oninput="saveGhCreds()">
+        </div>
+        <div class="fgrp" style="margin-bottom:8px">
+          <label class="flbl">Repository Name</label>
+          <input class="finp" id="gh-repo" placeholder="e.g. lifepulse" oninput="saveGhCreds()">
+        </div>
+        <div class="fgrp" style="margin-bottom:8px">
+          <label class="flbl">Personal Access Token <span style="color:var(--txt3);font-weight:400">(repo scope)</span></label>
+          <input class="finp" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxx" oninput="saveGhCreds()">
+        </div>
+        <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;line-height:1.55">
+          🔑 Get a token: github.com → Settings → Developer settings → Personal access tokens → Generate new token (classic) → tick <strong>repo</strong> scope → copy it here. Token is stored only in your browser.
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" style="flex:1;background:var(--pu);box-shadow:0 3px 10px rgba(124,58,237,.25)" onclick="githubBackup()">☁️ Backup to GitHub</button>
+          <button class="btn" style="flex:1;background:var(--bl)" onclick="githubRestore()">🔄 Restore from GitHub</button>
+        </div>
+        <div id="gh-status" style="margin-top:10px;font-size:12px;font-family:var(--font-head);font-weight:700;display:none"></div>
+      </div>
+    </div>
+
+    <div class="slbl">Migration</div>
+    <div class="card cp" style="margin-bottom:12px;border-color:var(--yes);background:var(--yes)">
+      <div style="font-size:12px;color:var(--txt2);line-height:1.65;margin-bottom:10px">
+        Moving to a new phone or browser? Export on your old device, then use <strong>Import JSON</strong> on the new one. The import is <em>smart</em> — it merges old data with any new entries, never overwrites newer records.
+      </div>
+      <div style="font-size:11px;color:var(--txt2);background:var(--bg2);border-radius:10px;padding:10px 12px;line-height:1.7">
+        <strong>What gets migrated:</strong> all habits &amp; completion history · milk calendar · finance entries &amp; categories · shopping lists · cycle data · all settings &amp; preferences<br>
+        <strong>Safe to import on top of existing data</strong> — newer entries win on conflict.
+      </div>
+    </div>
+
+    <div class="slbl">Danger Zone</div>
+    <button class="btn-out" style="color:var(--re);border-color:var(--res)" onclick="if(confirm('Clear ALL data? This cannot be undone. Export first!'))clearData()">🗑️ Clear All Data</button>
+    <div class="footer-note">LifePulse v5 · All data on your device 🔒 · <span id="last-backup-note"></span></div>
+  </div>
+</div>
+
+<!-- ══════ PWA PAGE ══════ -->
+<div class="page" id="page-pwa">
+  <div class="ph"><div class="pt">Add to Home Screen 📱</div><div class="ps">Install LifePulse as an app</div></div>
+
+  <!-- Install button (shows when browser supports it) -->
+  <div id="pwa-install-card" style="display:none;margin:0 20px 14px">
+    <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:var(--r2);padding:20px;color:#fff;text-align:center">
+      <div style="font-size:40px;margin-bottom:10px">⚡</div>
+      <div style="font-family:var(--font-head);font-size:18px;font-weight:800;margin-bottom:6px">Install LifePulse</div>
+      <div style="font-size:13px;opacity:.8;margin-bottom:16px">Works offline · No app store · Feels native</div>
+      <button id="pwa-install-btn" onclick="triggerPwaInstall()" style="background:#fff;color:#4f46e5;border:none;border-radius:14px;font-family:var(--font-head);font-size:14px;font-weight:800;padding:14px 32px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);width:100%">📲 Install Now</button>
+    </div>
+  </div>
+
+  <!-- Chrome manual method (always shown as fallback) -->
+  <div class="card cp" style="margin:0 20px 14px">
+    <div style="font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:12px;color:var(--txt)">🔵 Android · Chrome</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:26px;height:26px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">1</div>
+        <div style="font-size:13px;color:var(--txt2);line-height:1.5">Open this page in <strong>Chrome</strong> browser on your Android phone</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:26px;height:26px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">2</div>
+        <div style="font-size:13px;color:var(--txt2);line-height:1.5">Tap the <strong>⋮ three-dot menu</strong> (top right of Chrome)</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:26px;height:26px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">3</div>
+        <div style="font-size:13px;color:var(--txt2);line-height:1.5">Look for <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong> — it appears only if the page meets Chrome's PWA criteria</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:26px;height:26px;border-radius:50%;background:#22a06b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">✓</div>
+        <div style="font-size:13px;color:var(--txt2);line-height:1.5">If you see it — tap it and confirm. The LifePulse icon will appear on your home screen!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- If Chrome doesn't show install option -->
+  <div class="card cp" style="margin:0 20px 14px;border-color:var(--ye);background:var(--yes)">
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--ye);margin-bottom:8px">⚠️ Chrome not showing "Add to Home Screen"?</div>
+    <div style="font-size:13px;color:var(--txt2);line-height:1.65;margin-bottom:10px">Chrome requires the page to be served over <strong>HTTPS</strong> to show the install option. Since this is a local HTML file, here's the best workaround:</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:13px;color:var(--txt2);display:flex;gap:8px;align-items:flex-start"><span style="flex-shrink:0">🌐</span><div><strong>Option A — Host it free:</strong> Upload this HTML file to <strong>GitHub Pages</strong>, <strong>Netlify Drop</strong>, or <strong>Vercel</strong>. Then open the HTTPS link in Chrome — install button will appear instantly.</div></div>
+      <div style="font-size:13px;color:var(--txt2);display:flex;gap:8px;align-items:flex-start"><span style="flex-shrink:0">📁</span><div><strong>Option B — Kiwi Browser:</strong> Install <em>Kiwi Browser</em> from Play Store. It supports installing local HTML files as home screen apps via its menu.</div></div>
+      <div style="font-size:13px;color:var(--txt2);display:flex;gap:8px;align-items:flex-start"><span style="flex-shrink:0">🔖</span><div><strong>Option C — Bookmark shortcut:</strong> In Chrome, open the ⋮ menu → <em>Add to bookmarks</em>. Then create a shortcut: go to your Android home screen → long press → Widgets → Chrome shortcut → pick the bookmark.</div></div>
+    </div>
+  </div>
+
+  <!-- iPhone -->
+  <div class="card cp" style="margin:0 20px 14px">
+    <div style="font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:12px;color:var(--txt)">🍎 iPhone · Safari</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--or);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">1</div>
+        <div style="font-size:13px;color:var(--txt2)">Open in <strong>Safari</strong> (not Chrome — Safari is required on iPhone)</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--or);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">2</div>
+        <div style="font-size:13px;color:var(--txt2)">Tap the <strong>Share ⎋ button</strong> at the bottom of Safari</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--or);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">3</div>
+        <div style="font-size:13px;color:var(--txt2)">Scroll down in the share sheet → tap <strong>"Add to Home Screen"</strong></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="width:26px;height:26px;border-radius:50%;background:#22a06b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">✓</div>
+        <div style="font-size:13px;color:var(--txt2)">Tap <strong>Add</strong> — the ⚡ LifePulse icon appears on your home screen and runs like an app!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note" style="padding:0 20px 20px">LifePulse works fully offline once loaded 🔒</div>
+</div>
+
+<!-- ══════ WELCOME SCREEN ══════ -->
+<div id="welcome-screen">
+  <div class="wlc-logo">⚡</div>
+  <div class="wlc-title">Welcome to LifePulse</div>
+  <div class="wlc-sub">Your personal tracker for habits, health, finance & more. What should we call you?</div>
+  <div class="wlc-inp-wrap">
+    <input class="wlc-inp" id="wlc-name-inp" placeholder="Your name…" maxlength="24" onkeydown="if(event.key==='Enter')createProfile()">
+  </div>
+  <button class="wlc-btn" onclick="createProfile()">Get Started →</button>
+  <div class="wlc-note">Your data stays on your device. Each person gets a unique Profile ID — save it to restore data on a new phone.</div>
+  <div class="wlc-recover" onclick="toggleRecoverForm()">Already used this app? Restore your profile ↓</div>
+  <div class="wlc-recover-form" id="wlc-recover-form">
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:8px;font-weight:600">Enter your Profile ID (e.g. rahul_x7k2)</div>
+    <input class="wlc-inp" id="wlc-recover-inp" placeholder="name_xxxx" style="font-size:15px;margin-bottom:10px" onkeydown="if(event.key==='Enter')recoverProfile()">
+    <button class="wlc-btn" style="font-size:14px;padding:13px" onclick="recoverProfile()">Restore Profile</button>
+    <div style="font-size:11px;color:var(--txt3);margin-top:8px">This will load your saved data from this device. For data from a different device, restore after entering your name.</div>
+  </div>
+</div>
+
+<!-- ══════ EXPORT REMINDER ══════ -->
+<div id="export-reminder">
+  <div style="flex:1">
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--ye)">💾 Back up your data</div>
+    <div style="font-size:11px;color:var(--txt2);margin-top:2px">You haven't exported in a while. Save a backup before clearing browser data.</div>
+  </div>
+  <div style="display:flex;gap:6px;flex-shrink:0">
+    <button class="btn" style="background:var(--ye);font-size:11px;padding:7px 11px;box-shadow:none" onclick="exportData();dismissReminder()">Export</button>
+    <button onclick="dismissReminder()" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:18px;padding:0 4px">✕</button>
+  </div>
+</div>
+
+
+<nav class="bnav">
+  <div class="ni active" id="ni-today" onclick="showPage('today',this);setTodayTab('today')"><div class="ni-icon">🏠</div><div class="ni-lbl">Today</div></div>
+  <div class="ni" onclick="showPage('milk',this)"><div class="ni-icon">🥛</div><div class="ni-lbl">Milk</div></div>
+  <div class="ni" onclick="showPage('finance',this)"><div class="ni-icon">💰</div><div class="ni-lbl">Finance</div></div>
+  <div class="ni" id="nav-shop" onclick="showPage('shop',this)"><div class="ni-icon">🛒</div><div class="ni-lbl">Shop</div></div>
+  <div class="ni" onclick="showPage('meals',this)"><div class="ni-icon">🍕</div><div class="ni-lbl">Meals</div></div>
+  <div class="ni" onclick="showPage('cycle',this)" id="nav-cycle"><div class="ni-icon">🌸</div><div class="ni-lbl">Cycle</div></div>
+</nav>
+
+<!-- ADD EXPENSE MODAL -->
+<div class="overlay" id="add-expense-modal">
+  <div class="sheet">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div class="sht" style="margin-bottom:0" id="aem-title">Add Expense</div>
+      <button onclick="closeAddExpense()" style="background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;width:32px;height:32px;font-size:16px;cursor:pointer;color:var(--txt2)">✕</button>
+    </div>
+    <div class="fgrp"><label class="flbl">Category</label><select class="finp" id="fin-cat-sel" style="padding:9px 12px"></select></div>
+    <div class="frow">
+      <div class="fgrp"><label class="flbl">Amount (₹)</label><input class="finp" id="fin-amt" type="number" placeholder="500" style="font-family:var(--font-num)"></div>
+      <div class="fgrp"><label class="flbl">Date</label><input class="finp" id="fin-date" type="date" style="font-family:var(--font-num)"></div>
+    </div>
+    <div class="fgrp"><label class="flbl">Note (optional)</label><input class="finp" id="fin-note" placeholder="e.g. Lunch with team"></div>
+    <div class="macts">
+      <button class="btncancel" onclick="closeAddExpense()">Cancel</button>
+      <button class="btnok" style="background:var(--gr)" onclick="addFinEntry()">Save Expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="newsec-modal"><div class="sheet"><div class="sht">Create Section</div><label class="flbl">Name</label><input class="finp" id="nsname" placeholder="e.g. Spiritual Growth" style="margin:5px 0 12px"><label class="flbl" style="display:block;margin-bottom:7px">Icon</label><div class="egrid" id="epicker"></div><label class="flbl" style="display:block;margin-bottom:7px">Color</label><div class="cgrid" id="cpicker"></div><div class="macts"><button class="btncancel" onclick="closeNewSec()">Cancel</button><button class="btnok" onclick="createSec()">Create</button></div></div></div>
+<div class="overlay" id="newfincat-modal"><div class="sheet"><div class="sht">Finance Category</div><label class="flbl">Name</label><input class="finp" id="fc-name" placeholder="e.g. Boyfriend 💕" style="margin:5px 0 12px"><div class="frow"><div class="fgrp"><label class="flbl">Monthly Budget (₹)</label><input class="finp" id="fc-budget" type="number" placeholder="3000" style="font-family:var(--font-num)"></div><div class="fgrp"><label class="flbl">Alert at (%)</label><input class="finp" id="fc-alert" type="number" placeholder="80" style="font-family:var(--font-num)"></div></div><div style="height:10px"></div><label class="flbl" style="display:block;margin-bottom:7px">Icon</label><div class="egrid" id="fc-epicker"></div><label class="flbl" style="display:block;margin-bottom:7px">Color</label><div class="cgrid" id="fc-cpicker"></div><div class="macts"><button class="btncancel" onclick="closeNewFinCat()">Cancel</button><button class="btnok" onclick="createFinCat()">Create</button></div></div></div>
+<div class="tmodal" id="trend-modal"><div class="tsheet"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-family:var(--font-head);font-size:18px;font-weight:800" id="tmod-title"></div><button onclick="closeTrend()" style="background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;width:32px;height:32px;font-size:16px;cursor:pointer;color:var(--txt2)">✕</button></div><div style="display:flex;gap:8px;margin-bottom:12px"><button class="ptab active" onclick="setTrendP('week',this)">Week</button><button class="ptab" onclick="setTrendP('month',this)">Month</button><button class="ptab" onclick="setTrendP('year',this)">Year</button></div><div class="bchart" id="tmod-chart" style="height:120px"></div><div style="margin-top:16px"><div class="ctitle">Habit Streaks</div><div id="tmod-habits"></div></div></div></div>
+
+<!-- Milk qty picker modal -->
+<div class="qty-modal" id="qty-modal">
+  <div class="qty-sheet">
+    <div class="qty-title">Change / Remove 🥛</div>
+    <div style="font-size:12px;color:var(--txt3);margin-bottom:12px;font-family:var(--font-num)" id="qty-modal-date"></div>
+    <div class="qty-opts">
+      <div class="qty-opt" onclick="setQty(250)">250ml</div>
+      <div class="qty-opt" onclick="setQty(500)">500ml</div>
+      <div class="qty-opt" onclick="setQty(750)">750ml</div>
+      <div class="qty-opt" onclick="setQty(1000)">1L</div>
+    </div>
+    <div class="qty-custom-row">
+      <input class="finp" id="qty-custom" type="number" placeholder="Custom ml" style="font-family:var(--font-num)">
+      <button class="btn" onclick="setQtyCustom()">Set</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btncancel" style="flex:1" onclick="closeQtyModal()">Cancel</button>
+      <button style="flex:1;background:var(--res);border:1.5px solid var(--re);border-radius:12px;color:var(--re);font-family:var(--font-head);font-size:13px;font-weight:700;padding:12px;cursor:pointer" onclick="removeMilkDay()">🗑️ Remove</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════
+const DEF_SECS=[
+  {id:'health',name:'Health & Fitness',icon:'💪',color:'#22a06b',enabled:true,habits:['Morning workout','Evening walk','Drink 8 glasses water','No junk food','Sleep by 11 PM']},
+  {id:'study',name:'Study & Knowledge',icon:'📚',color:'#2e7ef0',enabled:true,habits:['Read 30 minutes','Solve problems','Review notes']},
+  {id:'office',name:'Office & Work',icon:'💼',color:'#d4820a',enabled:true,habits:['Complete daily tasks','Reply emails','Plan tomorrow','Deep work 1hr']},
+  {id:'creative',name:'Creativity',icon:'🎨',color:'#e0368c',enabled:true,habits:['Creative project 15min','Journal or write']},
+  {id:'skills',name:'Skills & Growth',icon:'🚀',color:'#7c3aed',enabled:false,habits:['Practice skill 20min','Course module']},
+  {id:'wellness',name:'Wellness & Mind',icon:'🧘',color:'#0891b2',enabled:false,habits:['10min meditation','Gratitude journal']},
+];
+const DEF_FIN_CATS=[
+  {id:'eating',name:'Eating & Food',icon:'🍱',color:'#f4732a',budget:4000,alert:80},
+  {id:'shopping',name:'Shopping',icon:'🛍️',color:'#e0368c',budget:3000,alert:80},
+  {id:'basics',name:'Basics (Rent/Elec)',icon:'🏠',color:'#2e7ef0',budget:15000,alert:90},
+  {id:'extra',name:'Extra (Sport/Rides)',icon:'🏸',color:'#22a06b',budget:2000,alert:80},
+  {id:'partner',name:'Boyfriend 💕',icon:'💕',color:'#7c3aed',budget:2000,alert:80},
+];
+const THEMES=[
+  {id:'warm',name:'Warm',bg:'#fff8f0',bg2:'#fef0e0',card:'#fff',border:'rgba(200,150,80,.14)',txt:'#1a110a',txt2:'#6b4a2a',txt3:'#b08060'},
+  {id:'cream',name:'Cream',bg:'#fdfbf7',bg2:'#f5f0e8',card:'#fff',border:'rgba(180,160,120,.14)',txt:'#1a1510',txt2:'#6b5a3a',txt3:'#a09060'},
+  {id:'lavender',name:'Lavender',bg:'#f8f5ff',bg2:'#ede8fa',card:'#fff',border:'rgba(124,58,237,.12)',txt:'#1a0f2e',txt2:'#4a3580',txt3:'#9080c0'},
+  {id:'rose',name:'Rose',bg:'#fff5f7',bg2:'#ffe8ec',card:'#fff',border:'rgba(224,54,140,.12)',txt:'#1a0813',txt2:'#7a2850',txt3:'#c07090'},
+  {id:'mint',name:'Mint',bg:'#f2fbf7',bg2:'#e0f5eb',card:'#fff',border:'rgba(34,160,107,.12)',txt:'#0a1a12',txt2:'#2a6a4a',txt3:'#70a880'},
+  {id:'slate',name:'Slate',bg:'#f5f7fa',bg2:'#e8ecf2',card:'#fff',border:'rgba(80,100,140,.12)',txt:'#0f1520',txt2:'#3a4a6a',txt3:'#7080a0'},
+];
+const FONTS=[
+  {id:'jakarta',name:'Plus Jakarta Sans',family:"'Plus Jakarta Sans',sans-serif",head:"'Syne',sans-serif",num:"'DM Mono',monospace"},
+  {id:'poppins',name:'Poppins',family:"'Poppins',sans-serif",head:"'Poppins',sans-serif",num:"'DM Mono',monospace"},
+  {id:'nunito',name:'Nunito',family:"'Nunito',sans-serif",head:"'Nunito',sans-serif",num:"'DM Mono',monospace"},
+];
+const ACCENT_COLORS=['#f4732a','#e0368c','#7c3aed','#2e7ef0','#22a06b','#0891b2','#d4820a','#dc2626'];
+const QUOTES=[
+  {t:"Small daily improvements lead to staggering long-term results.",a:"Unknown"},
+  {t:"The secret of getting ahead is getting started.",a:"Mark Twain"},
+  {t:"Discipline is choosing what you want most over what you want now.",a:"Augusta F. Kantra"},
+  {t:"Take care of your body. It's the only place you have to live.",a:"Jim Rohn"},
+  {t:"An investment in knowledge pays the best interest.",a:"Benjamin Franklin"},
+  {t:"You don't have to be great to start, but you have to start.",a:"Zig Ziglar"},
+];
+const SYMS=['Cramps','Bloating','Headache','Fatigue','Back pain','Nausea','Acne','Mood swings'];
+const MOODS=['😊 Happy','😔 Sad','😤 Irritable','😰 Anxious','🥰 Loving','⚡ Energetic','😴 Tired','🤩 Motivated'];
+const EMOJIS=['💪','📚','💼','🎨','🚀','🌐','🧘','💰','🌟','🎵','🏃','🍎','✍️','🔬','🌿','🏋️','🎯','🧠','❤️','🌈','🎭','🎓','🏆','🤝','🌙','⭐','💡','🎪'];
+const COLORS=['#22a06b','#2e7ef0','#d4820a','#e0368c','#7c3aed','#0891b2','#16a34a','#f4732a','#dc2626','#8b5cf6','#0d9488','#b45309','#9333ea','#0ea5e9'];
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let S={
+  sections:[],habits:{},meals:[],
+  cycle:{periods:[],cycleLength:28,periodLength:5,symptoms:{},moods:{}},
+  prefs:{showCycle:true,quotes:true},
+  meta:{lastBackup:null,lastRestore:null},
+  streak:0,profile:{},
+  milk:{days:{},pricePerDay:35,defQty:500,paidMonths:[]},
+  shop:{items:[],categories:['Groceries','Personal Care','Clothes','Electronics','Home','Medicine','Other']},
+  finance:{entries:[],categories:[],monthBudget:30000},
+  appearance:{theme:'warm',font:'jakarta',accent:'#f4732a'},
+};
+let curPeriod='week',statSecId='all',compPeriod='week',trendSecId=null,trendP='week';
+let calDate=new Date(),curMeal=null,hmSecId='all';
+let newSecEmoji='🌟',newSecColor='#f4732a';
+let newFcEmoji='💸',newFcColor='#22a06b';
+let milkCalDate=new Date(),qtyModalDate=null;
+let curFinMonth=null,catFilterId='all',mealView='log';
+let editingDate=null;
+
+// ═══════════════════════════════════════════════════════
+// PROFILE SYSTEM
+// Each user gets a unique key: lp5_name_xxxx
+// Stored in localStorage under 'lp5_pid' on this device
+// ═══════════════════════════════════════════════════════
+let PROFILE_KEY='lp5'; // default, overridden after profile load
+
+function genCode(){
+  const chars='abcdefghjkmnpqrstuvwxyz23456789'; // no confusable chars
+  let c='';for(let i=0;i<4;i++)c+=chars[Math.floor(Math.random()*chars.length)];
+  return c;
+}
+function makePid(name){
+  const safe=name.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12)||'user';
+  return safe+'_'+genCode();
+}
+function getPid(){return localStorage.getItem('lp5_pid')||null;}
+function setPid(pid){localStorage.setItem('lp5_pid',pid);}
+
+function createProfile(){
+  const name=document.getElementById('wlc-name-inp').value.trim();
+  if(!name){document.getElementById('wlc-name-inp').focus();return;}
+  const pid=makePid(name);
+  setPid(pid);
+  PROFILE_KEY='lp5_'+pid;
+  // Init fresh state with name pre-filled
+  S.sections=JSON.parse(JSON.stringify(DEF_SECS));
+  S.finance.categories=JSON.parse(JSON.stringify(DEF_FIN_CATS));
+  S.profile={name,nick:name.split(' ')[0]};
+  S.meta={lastBackup:null,lastRestore:null,createdAt:new Date().toISOString()};
+  save();
+  hideWelcome();
+}
+function recoverProfile(){
+  const pid=document.getElementById('wlc-recover-inp').value.trim().toLowerCase();
+  if(!pid||!pid.includes('_')){alert('Enter a valid Profile ID like: rahul_x7k2');return;}
+  // Check if data exists for this pid on this device
+  const existing=localStorage.getItem('lp5_'+pid);
+  if(!existing){
+    alert('No data found for "'+pid+'" on this device.\n\nIf your data is on a different device, enter your name → then import your JSON backup in Settings → Backup & Restore.');
+    return;
+  }
+  setPid(pid);
+  PROFILE_KEY='lp5_'+pid;
+  load();
+  hideWelcome();
+}
+function toggleRecoverForm(){
+  const f=document.getElementById('wlc-recover-form');
+  f.style.display=f.style.display==='block'?'none':'block';
+}
+function hideWelcome(){
+  const ws=document.getElementById('welcome-screen');
+  ws.style.opacity='0';ws.style.transition='opacity .4s ease';
+  setTimeout(()=>{ws.style.display='none';},400);
+  initApp();
+}
+function checkWelcome(){
+  const pid=getPid();
+  if(pid){
+    PROFILE_KEY='lp5_'+pid;
+    load();
+    // validate data loaded properly
+    if(S.profile?.name){
+      document.getElementById('welcome-screen').style.display='none';
+      initApp();
+      return;
+    }
+    // pid exists but no data — show welcome with pid pre-filled
+    document.getElementById('wlc-recover-inp').value=pid;
+    document.getElementById('wlc-recover-form').style.display='block';
+  }
+  // show welcome screen (default state — already visible)
+}
+
+function save(){
+  try{localStorage.setItem(PROFILE_KEY,JSON.stringify(S));}catch(e){
+    // Storage full — warn user
+    console.warn('localStorage full:',e);
+    alert('⚠️ Storage is nearly full. Please export your data to free up space.');
+  }
+}
+function load(){
+  try{
+    const d=localStorage.getItem(PROFILE_KEY);
+    if(d)S=Object.assign(S,JSON.parse(d));
+    else{S.sections=JSON.parse(JSON.stringify(DEF_SECS));S.finance.categories=JSON.parse(JSON.stringify(DEF_FIN_CATS));}
+    if(!S.sections||!S.sections.length)S.sections=JSON.parse(JSON.stringify(DEF_SECS));
+    if(!S.finance.categories||!S.finance.categories.length)S.finance.categories=JSON.parse(JSON.stringify(DEF_FIN_CATS));
+    if(!S.cycle)S.cycle={periods:[],cycleLength:28,periodLength:5,symptoms:{},moods:{}};
+    if(!S.milk)S.milk={days:{},pricePerDay:35,defQty:500,paidMonths:[]};
+    if(!S.finance)S.finance={entries:[],categories:JSON.parse(JSON.stringify(DEF_FIN_CATS)),monthBudget:30000};
+    if(!S.appearance)S.appearance={theme:'warm',font:'jakarta',accent:'#f4732a'};
+    if(!S.meals)S.meals=[];
+    if(!S.meta)S.meta={lastBackup:null,lastRestore:null};
+  }catch(e){S.sections=JSON.parse(JSON.stringify(DEF_SECS));}
+}
+
+function copyProfileId(){
+  const pid=getPid()||'';
+  navigator.clipboard?.writeText(pid).then(()=>{
+    const btn=document.querySelector('.profile-chip-copy');
+    if(btn){btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);}
+  }).catch(()=>{
+    // fallback for older browsers
+    const el=document.getElementById('settings-profile-id-txt');
+    if(el){const r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);}
+  });
+}
+function updateProfileUI(){
+  const pid=getPid()||'';
+  const name=S.profile?.name||S.profile?.nick||'';
+  // Settings chip
+  const sName=document.getElementById('settings-profile-name');
+  const sId=document.getElementById('settings-profile-id-txt');
+  if(sName)sName.textContent=name||'—';
+  if(sId)sId.textContent=pid||'—';
+  // Hamburger menu
+  const hPid=document.getElementById('hm-pid');
+  if(hPid)hPid.textContent=pid?'ID: '+pid:'';
+}
+
+// ── Export reminder logic ──
+function checkExportReminder(){
+  const last=S.meta?.lastExport;
+  if(!last){
+    // Never exported — show reminder after 7 days of use
+    const created=S.meta?.createdAt;
+    if(!created)return;
+    const daysSince=(Date.now()-new Date(created))/(1000*60*60*24);
+    if(daysSince>=7)showReminder();
+    return;
+  }
+  const daysSince=(Date.now()-new Date(last))/(1000*60*60*24);
+  if(daysSince>=14)showReminder();
+}
+function showReminder(){document.getElementById('export-reminder').classList.add('show');}
+function dismissReminder(){
+  document.getElementById('export-reminder').classList.remove('show');
+  if(!S.meta)S.meta={};
+  S.meta.reminderDismissed=new Date().toISOString();
+  save();
+}
+
+function updateGreeting(){
+  const h=new Date().getHours(),p=S.profile||{};
+  const nick=p.nick||p.name||'';
+  const greeting=(h<12?'Good morning ☀️':h<17?'Good afternoon 🌤️':'Good evening 🌙');
+  const el=document.getElementById('greeting');
+  if(el)el.textContent=nick?greeting+', '+nick+'!':greeting;
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+function dk(d){const t=d||new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');}
+function today(){return dk(new Date());}
+function activeDate(){return editingDate||today();}
+function fmt(d){return d.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});}
+function fmts(d){return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
+function monthKey(d){const t=d||new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0');}
+function hex2rgba(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
+function fmtINR(n){return'₹'+Number(n||0).toLocaleString('en-IN');}
+
+// ═══════════════════════════════════════════════════════
+// APPEARANCE / THEME
+// ═══════════════════════════════════════════════════════
+function applyTheme(themeId,accentColor){
+  const th=THEMES.find(t=>t.id===themeId)||THEMES[0];
+  const root=document.documentElement;
+  root.style.setProperty('--bg',th.bg);
+  root.style.setProperty('--bg2',th.bg2);
+  root.style.setProperty('--card',th.card);
+  root.style.setProperty('--border',th.border);
+  root.style.setProperty('--txt',th.txt);
+  root.style.setProperty('--txt2',th.txt2);
+  root.style.setProperty('--txt3',th.txt3);
+  const ac=accentColor||S.appearance?.accent||'#f4732a';
+  root.style.setProperty('--or',ac);
+  root.style.setProperty('--or2',ac);
+  root.style.setProperty('--ors',hex2rgba(ac,.11));
+  root.style.setProperty('--ors2',hex2rgba(ac,.22));
+}
+function applyFont(fontId){
+  const f=FONTS.find(x=>x.id===fontId)||FONTS[0];
+  document.documentElement.style.setProperty('--font-body',f.family);
+  document.documentElement.style.setProperty('--font-head',f.head);
+}
+function renderAppearance(){
+  document.getElementById('theme-grid').innerHTML=THEMES.map(th=>`
+    <div class="theme-opt ${S.appearance.theme===th.id?'sel':''}" style="background:${th.bg};border-color:${S.appearance.theme===th.id?'var(--or)':'transparent'}" onclick="pickTheme('${th.id}')">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <div style="width:16px;height:16px;border-radius:50%;background:${th.bg2}"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:${th.card};border:1px solid ${th.border}"></div>
+      </div>
+      <div class="theme-opt-name" style="color:${th.txt}">${th.name}</div>
+    </div>`).join('');
+  document.getElementById('font-grid').innerHTML=FONTS.map(f=>`
+    <div class="font-opt ${S.appearance.font===f.id?'sel':''}" onclick="pickFont('${f.id}')">
+      <div class="font-opt-name" style="font-family:${f.family}">${f.name}</div>
+      <div class="font-opt-preview" style="font-family:${f.family}">Aa Bb 123</div>
+    </div>`).join('');
+  document.getElementById('accent-grid').innerHTML=ACCENT_COLORS.map(c=>`
+    <div onclick="pickAccent('${c}')" style="width:36px;height:36px;border-radius:50%;background:${c};cursor:pointer;border:3px solid ${S.appearance.accent===c?'var(--txt)':'transparent'};transition:.2s;box-shadow:var(--sh)"></div>`).join('');
+}
+function pickTheme(id){S.appearance.theme=id;applyTheme(id,S.appearance.accent);save();renderAppearance();}
+function pickFont(id){S.appearance.font=id;applyFont(id);save();renderAppearance();}
+function pickAccent(c){S.appearance.accent=c;applyTheme(S.appearance.theme,c);save();renderAppearance();}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+function initApp(){
+  applyTheme(S.appearance?.theme||'warm',S.appearance?.accent||'#f4732a');
+  applyFont(S.appearance?.font||'jakarta');
+  updateGreeting();
+  document.getElementById('datedisp').textContent=fmt(new Date());
+  const q=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  document.getElementById('qtext').textContent='"'+q.t+'"';
+  document.getElementById('qauth').textContent='— '+q.a;
+  if(!S.prefs?.quotes)document.getElementById('qcard').style.display='none';
+  if(!S.prefs?.showCycle)document.getElementById('nav-cycle').style.display='none';
+  const djInp=document.getElementById('date-jump-inp');
+  if(djInp){djInp.value=today();djInp.max=today();}
+  document.getElementById('fin-date').value=today();
+  document.getElementById('meal-date-inp').value=today();
+  const minDate='2025-01-01';
+  ['fin-date','meal-date-inp'].forEach(id=>{const el=document.getElementById(id);if(el)el.min=minDate;});
+  if(S.milk?.pricePerDay)document.getElementById('milk-rate').value=S.milk.pricePerDay;
+  if(S.milk?.defQty)document.getElementById('milk-def-qty').value=S.milk.defQty;
+  curFinMonth=monthKey();
+  renderDateStrip();renderSections();renderMeals();renderCycle();renderShop();
+  renderSettings();renderStats();renderMilk();renderFinance();
+  renderAppearance();buildHmPills();calcStreak();updateScore();updateTodayMini();
+  loadProfile();calcHealth();setupModals();updateHMenuProfile();
+  updateProfileUI();
+  checkExportReminder();
+}
+
+// ═══════════════════════════════════════════════════════
+// HAMBURGER MENU
+// ═══════════════════════════════════════════════════════
+function openHMenu(){document.getElementById('hmenu-drawer').classList.add('open');document.getElementById('hmenu-overlay').classList.add('show');}
+function closeHMenu(){document.getElementById('hmenu-drawer').classList.remove('open');document.getElementById('hmenu-overlay').classList.remove('show');}
+function showPwa(){closeHMenu();showPage('pwa',null);}
+function updateHMenuProfile(){
+  const p=S.profile||{};
+  document.getElementById('hm-avatar').textContent=p.avatar||'⚡';
+  document.getElementById('hm-name').textContent=p.name||'LifePulse';
+  document.getElementById('hm-tag').textContent=p.name?'Your personal tracker':'Set up your profile';
+  const pidEl=document.getElementById('hm-pid');
+  if(pidEl){const pid=getPid();pidEl.textContent=pid?'ID: '+pid:'';}
+}
+
+// ═══════════════════════════════════════════════════════
+// DATE STRIP + PAST DATE EDITING
+// ═══════════════════════════════════════════════════════
+function renderDateStrip(){
+  const tk=today(),DAY=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const today2=new Date(),dates=[];
+  for(let i=29;i>=0;i--){const d=new Date(today2);d.setDate(today2.getDate()-i);dates.push(d);}
+  document.getElementById('datestrip').innerHTML=dates.map(d=>{
+    const k=dk(d),s=dayScore(k),isT=k===tk,isE=k===editingDate;
+    let cls='dchip';if(isE)cls+=' editing';else if(isT)cls+=' today';else if(s>0)cls+=' done';
+    return`<div class="${cls}" onclick="selectDate('${k}','${isT}')"><div class="dc-d">${DAY[d.getDay()]}</div><div class="dc-n">${d.getDate()}</div></div>`;
+  }).join('');
+  setTimeout(()=>{const s=document.getElementById('datestrip');s.scrollLeft=s.scrollWidth;},50);
+}
+function selectDate(k,isT){
+  if(isT==='true'||k===today()){exitEdit();return;}
+  editingDate=k;
+  const d=new Date(k);
+  document.getElementById('edit-banner').classList.add('show');
+  document.getElementById('edit-banner-txt').textContent=`✏️ Editing: ${fmts(d)} — tap habits to update`;
+  renderDateStrip();renderSections();updateScore();
+}
+function exitEdit(){editingDate=null;document.getElementById('edit-banner').classList.remove('show');renderDateStrip();renderSections();updateScore();}
+
+// ═══════════════════════════════════════════════════════
+// SECTIONS & HABITS
+// ═══════════════════════════════════════════════════════
+function renderSections(){
+  const w=document.getElementById('secswrap');w.innerHTML='';
+  const ad=activeDate();
+  S.sections.filter(s=>s.enabled).forEach(sec=>{
+    const habits=sec.habits||[],done=habits.filter((_,i)=>getH(ad,sec.id,i)).length;
+    const pct=habits.length?Math.round(done/habits.length*100):0,off=88-(88*pct/100);
+    const el=document.createElement('div');el.className='sec-card';el.id='sc-'+sec.id;
+    el.innerHTML=`<div class="sec-head" onclick="togSec('${sec.id}')">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div class="sec-icon" style="background:${hex2rgba(sec.color,.12)}">${sec.icon}</div>
+        <div><div class="sec-nm">${sec.name}</div><div class="sec-sb">${done}/${habits.length} done</div></div>
+      </div>
+      <div class="sec-rt">
+        <button class="trend-pill" onclick="event.stopPropagation();openTrend('${sec.id}')">↗</button>
+        <svg class="pring" viewBox="0 0 32 32"><circle class="bg" cx="16" cy="16" r="14"/>
+          <circle cx="16" cy="16" r="14" transform="rotate(-90 16 16)" style="fill:none;stroke:${sec.color};stroke-width:3;stroke-linecap:round;stroke-dasharray:88;stroke-dashoffset:${off}"/>
+        </svg><span class="chev">▾</span>
+      </div>
+    </div>
+    <div class="sec-body"><div class="hlist">${habits.map((h,i)=>{
+      const d2=getH(ad,sec.id,i),st=habStreak(sec.id,i);
+      return`<div class="hitem"><div class="hchk ${d2?'done':''}" style="${d2?'background:'+sec.color+';border-color:'+sec.color:''}" onclick="togHabit('${sec.id}',${i})">${d2?'✓':''}</div>
+      <div><div class="hnm">${h}</div><div class="hst">${st}d streak 🔥</div></div></div>`;
+    }).join('')}</div></div>`;
+    w.appendChild(el);
+  });
+}
+function togSec(id){document.getElementById('sc-'+id)?.classList.toggle('open');}
+function getH(dkey,sid,idx){return!!(S.habits[dkey]&&S.habits[dkey][sid+'_'+idx]);}
+function togHabit(sid,idx){
+  const ad=activeDate();if(!S.habits[ad])S.habits[ad]={};
+  const k=sid+'_'+idx;S.habits[ad][k]=!S.habits[ad][k];
+  save();renderSections();updateScore();renderDateStrip();calcStreak();updateTodayMini();
+}
+function habStreak(sid,idx){let n=0;const t=new Date();for(let i=1;i<=365;i++){const d=new Date(t);d.setDate(t.getDate()-i);if(!getH(dk(d),sid,idx))break;n++;}return n;}
+function dayScore(dkey){
+  if(!S.habits[dkey])return 0;
+  const ac=S.sections.filter(s=>s.enabled);let tot=0,done=0;
+  ac.forEach(sec=>(sec.habits||[]).forEach((_,i)=>{tot++;if(S.habits[dkey][sec.id+'_'+i])done++;}));
+  return tot?Math.round(done/tot*100):0;
+}
+function secScore(dkey,sid){
+  const sec=S.sections.find(s=>s.id===sid);
+  if(!sec||!sec.habits.length||!S.habits[dkey])return 0;
+  return Math.round(sec.habits.filter((_,i)=>S.habits[dkey][sid+'_'+i]).length/sec.habits.length*100);
+}
+function updateScore(){
+  const ad=activeDate(),s=dayScore(ad);
+  document.getElementById('todayscore').textContent=s+'%';
+  document.getElementById('todaybar').style.width=s+'%';
+  const d=["No habits done yet — let's go!",'Great start! Keep going.','Halfway there! Crushing it.','Almost perfect!','Flawless! Unstoppable 🎉'];
+  document.getElementById('todaydesc').textContent=d[s===0?0:s<30?1:s<60?2:s<90?3:4];
+}
+function calcStreak(){
+  let n=0;const t=new Date();
+  for(let i=0;i<=365;i++){const d=new Date(t);d.setDate(t.getDate()-i);if(dayScore(dk(d))>=50)n++;else if(i>0)break;}
+  S.streak=n;document.getElementById('streakdisp').textContent=n+'🔥';save();
+}
+function updateTodayMini(){
+  // 7-day avg
+  const t=new Date();const scores=[];
+  for(let i=6;i>=0;i--){const d=new Date(t);d.setDate(t.getDate()-i);scores.push(dayScore(dk(d)));}
+  const avg=Math.round(scores.reduce((a,b)=>a+b,0)/7);
+  const best=Math.max(...scores);
+  document.getElementById('t-streak').textContent=S.streak+'🔥';
+  document.getElementById('t-avg').textContent=avg+'%';
+  document.getElementById('t-best').textContent=best+'%';
+  // week chart
+  const DAY=['S','M','T','W','T','F','S'];
+  document.getElementById('week-chart').innerHTML=scores.map((s,i)=>{
+    const d=new Date(t);d.setDate(t.getDate()-(6-i));
+    const c=s>=80?'#22a06b':s>=50?'#f4732a':'#dc2626';
+    const isT=dk(d)===today();
+    return`<div class="bcol"><div class="bar" style="height:${Math.max(s,3)}%;background:${c}${isT?'':'55'};border:1.5px solid ${c}${isT?'':'80'}"></div><div class="blbl" style="${isT?'color:var(--or);font-weight:700':''}">${DAY[d.getDay()]}</div></div>`;
+  }).join('');
+}
+
+// PWA install prompt
+let _pwaPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();_pwaPrompt=e;
+  const card=document.getElementById('pwa-install-card');
+  if(card)card.style.display='block';
+});
+window.addEventListener('appinstalled',()=>{
+  _pwaPrompt=null;
+  const card=document.getElementById('pwa-install-card');
+  if(card){card.innerHTML='<div style="padding:20px;text-align:center;font-size:16px;color:var(--gr);font-weight:700">✅ LifePulse installed successfully!</div>';}
+});
+function triggerPwaInstall(){
+  if(_pwaPrompt){_pwaPrompt.prompt();_pwaPrompt.userChoice.then(r=>{if(r.outcome==='accepted')_pwaPrompt=null;});}
+  else{alert('Use the browser menu (⋮) → "Add to Home Screen" to install.');}
+}
+
+// Tab state
+let _todayTab='today';
+
+// ═══════════════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════════════
+function toggleDateJump(){
+  const panel=document.getElementById('date-jump-panel');
+  const djInp=document.getElementById('date-jump-inp');
+  if(panel.style.display==='none'){
+    panel.style.display='block';
+    if(djInp){djInp.max=today();if(!djInp.value)djInp.value=today();}
+    if(djInp)djInp.focus();
+  } else {
+    panel.style.display='none';
+  }
+}
+function jumpToDate(){
+  const v=document.getElementById('date-jump-inp').value;
+  if(!v)return;
+  if(v>today()){alert('Cannot jump to future dates');return;}
+  editingDate=v;
+  const d=new Date(v+'T12:00:00');
+  document.getElementById('edit-banner').classList.add('show');
+  document.getElementById('edit-banner-txt').textContent=`✏️ Editing: ${fmts(d)} — tap habits to update`;
+  document.getElementById('date-jump-panel').style.display='none';
+  // rebuild date strip centered on chosen date so user sees context
+  renderDateStripAround(v);
+  renderSections();updateScore();
+}
+function renderDateStripAround(centerKey){
+  const tk=today(),DAY=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const center=new Date(centerKey+'T12:00:00');
+  const dates=[];
+  // Show 14 days ending at max(centerKey+7, today)
+  const endDate=new Date(Math.max(center.getTime()+7*86400000, new Date().getTime()));
+  for(let i=29;i>=0;i--){const d=new Date(endDate);d.setDate(endDate.getDate()-i);if(dk(d)<=today())dates.push(d);}
+  document.getElementById('datestrip').innerHTML=dates.map(d=>{
+    const k=dk(d),s=dayScore(k),isT=k===tk,isE=k===editingDate;
+    let cls='dchip';if(isE)cls+=' editing';else if(isT)cls+=' today';else if(s>0)cls+=' done';
+    return`<div class="${cls}" onclick="selectDate('${k}','${isT}')"><div class="dc-d">${DAY[d.getDay()]}</div><div class="dc-n">${d.getDate()}</div></div>`;
+  }).join('');
+  setTimeout(()=>{
+    const strip=document.getElementById('datestrip');
+    const active=strip.querySelector('.editing');
+    if(active)active.scrollIntoView({inline:'center',behavior:'smooth'});
+    else strip.scrollLeft=strip.scrollWidth;
+  },50);
+}
+function setTodayTab(tab){
+  _todayTab=tab;
+  document.getElementById('today-tab-content').style.display=tab==='today'?'block':'none';
+  document.getElementById('insights-tab-content').style.display=tab==='insights'?'block':'none';
+  document.getElementById('today-tab-btn').classList.toggle('active',tab==='today');
+  document.getElementById('insights-tab-btn').classList.toggle('active',tab==='insights');
+  if(tab==='insights'){renderStats();drawHeatmap(hmSecId);buildHmPills();}
+}
+function showPage(name,el){
+  // Redirect stats to today+insights tab
+  if(name==='stats'){
+    showPage('today',el);
+    setTodayTab('insights');
+    return;
+  }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name)?.classList.add('active');
+  if(el)el.classList.add('active');
+  if(name==='today')setTodayTab(_todayTab);
+  if(name==='cycle')renderCycle();
+  if(name==='profile'){loadProfile();calcHealth();}
+  if(name==='milk')renderMilk();
+  if(name==='finance')renderFinance();
+  if(name==='appearance')renderAppearance();
+  if(name==='settings')renderSettings();
+  if(name==='shop')renderShop();
+}
+
+// ═══════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════
+function setPeriod(p,btn){
+  curPeriod=p;
+  document.querySelectorAll('#stats-period-tabs .ptab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderStats();
+}
+function setCompPeriod(p,btn){
+  compPeriod=p;
+  document.querySelectorAll('#insights-tab-content .ccrd:first-of-type .ptab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderCompChart();
+}
+function renderCompChart(){
+  const t=new Date(),days=compPeriod==='week'?7:compPeriod==='month'?30:365;
+  const scores=[],labels=[];
+  for(let i=days-1;i>=0;i--){
+    const d=new Date(t);d.setDate(t.getDate()-i);
+    scores.push(statSecId==='all'?dayScore(dk(d)):secScore(dk(d),statSecId));
+    if(compPeriod==='week')labels.push(['S','M','T','W','T','F','S'][d.getDay()]);
+    else if(compPeriod==='month')labels.push(i%7===0?String(d.getDate()):'');
+    else labels.push(i%30===0?d.toLocaleDateString('en',{month:'short'}):'');
+  }
+  const step=compPeriod==='week'?1:compPeriod==='month'?2:7;
+  const fs=scores.filter((_,i)=>i%step===0),fl=labels.filter((_,i)=>i%step===0);
+  document.getElementById('main-chart').innerHTML=fs.map((s,i)=>{
+    const c=s>=80?'#22a06b':s>=50?'#f4732a':'#dc2626';
+    return`<div class="bcol"><div class="bar" style="height:${Math.max(s,2)}%;background:${c}45;border:1.5px solid ${c}70"></div><div class="blbl">${fl[i]||''}</div></div>`;
+  }).join('');
+}
+function renderStats(){
+  const t=new Date(),days=curPeriod==='week'?7:curPeriod==='month'?30:365;
+  const scores=[];
+  for(let i=days-1;i>=0;i--){const d=new Date(t);d.setDate(t.getDate()-i);scores.push(dayScore(dk(d)));}
+  const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0;
+  const tot=Object.values(S.habits).reduce((s,d)=>s+Object.values(d).filter(Boolean).length,0);
+  const best=scores.length?Math.max(...scores):0;
+  document.getElementById('s-avg').textContent=avg+'%';
+  document.getElementById('s-streak').textContent=S.streak+'🔥';
+  document.getElementById('s-total').textContent=tot;
+  document.getElementById('s-best').textContent=best+'%';
+  renderCompChart();
+  renderSecChart();
+  // section filter
+  document.getElementById('sec-filter').innerHTML=
+    `<div class="stab ${statSecId==='all'?'active':''}" onclick="setStatSec('all',this)">All</div>`+
+    S.sections.filter(s=>s.enabled).map(sec=>`<div class="stab ${statSecId===sec.id?'active':''}" onclick="setStatSec('${sec.id}',this)">${sec.icon}</div>`).join('');
+  // section chart (avg per section)
+  document.getElementById('sec-chart').innerHTML=S.sections.filter(s=>s.enabled).map(sec=>{
+    const a=Math.round(scores.map((_,i)=>{const d=new Date(t);d.setDate(t.getDate()-(days-1-i));return secScore(dk(d),sec.id);}).reduce((a,b)=>a+b,0)/Math.max(scores.length,1));
+    return`<div class="bcol"><div class="bar" style="height:${Math.max(a,2)}%;background:${sec.color}45;border:1.5px solid ${sec.color}80"></div><div class="blbl">${sec.icon}</div></div>`;
+  }).join('');
+  // today breakdown
+  const tk2=today();
+  document.getElementById('sec-breakdown').innerHTML=S.sections.filter(s=>s.enabled).map(sec=>{
+    const p=secScore(tk2,sec.id);
+    return`<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:13px">${sec.icon} ${sec.name}</span><span style="font-family:var(--font-num);font-size:12px;color:${sec.color}">${p}%</span></div><div style="height:5px;border-radius:3px;background:var(--bg2)"><div style="height:100%;border-radius:3px;background:${sec.color};width:${p}%;transition:width .8s ease"></div></div></div>`;
+  }).join('');
+}
+function setStatSec(id,el){
+  statSecId=id;
+  document.querySelectorAll('#sec-filter .stab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  // Only update section bar chart - NOT the completion rate chart
+  renderSecChart();
+}
+function renderSecChart(){
+  const t=new Date(),days=curPeriod==='week'?7:curPeriod==='month'?30:365;
+  const scores=[];
+  for(let i=days-1;i>=0;i--){const d=new Date(t);d.setDate(t.getDate()-i);scores.push(dayScore(dk(d)));}
+  document.getElementById('sec-chart').innerHTML=S.sections.filter(s=>s.enabled).map(sec=>{
+    const a=Math.round(scores.map((_,i)=>{const d=new Date(t);d.setDate(t.getDate()-(days-1-i));return secScore(dk(d),sec.id);}).reduce((a,b)=>a+b,0)/Math.max(scores.length,1));
+    return`<div class="bcol"><div class="bar" style="height:${Math.max(a,2)}%;background:${sec.color}45;border:1.5px solid ${sec.color}80"></div><div class="blbl">${sec.icon}</div></div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// HEATMAP (rounded canvas) — FIXED
+// ═══════════════════════════════════════════════════════
+function buildHmPills(){
+  document.getElementById('hm-pills').innerHTML=
+    `<span class="ptab ${hmSecId==='all'?'active':''}" style="font-size:10px;padding:4px 10px;cursor:pointer" onclick="switchHm('all',this)">All</span>`+
+    S.sections.filter(s=>s.enabled).map(sec=>`<span class="ptab ${hmSecId===sec.id?'active':''}" style="font-size:10px;padding:4px 10px;cursor:pointer" onclick="switchHm('${sec.id}',this)">${sec.icon}</span>`).join('');
+}
+function switchHm(id,el){
+  hmSecId=id;
+  document.querySelectorAll('#hm-pills .ptab').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  drawHeatmap(id);
+}
+function updateHmLegend(color){
+  ['leg1','leg2','leg3','leg4'].forEach((id,i)=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.style.background=hex2rgba(color,[.22,.48,.72,1][i]);el.style.borderRadius='4px';
+  });
+}
+function drawHeatmap(secId){
+  const sec=secId!=='all'?S.sections.find(s=>s.id===secId):null;
+  const mc=(sec&&sec.color)||S.appearance?.accent||'#f4732a';
+  const canvas=document.getElementById('hm-canvas');if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  const wrap=canvas.parentElement;
+  const availW=wrap?wrap.clientWidth:(window.innerWidth-72);
+  const cols=53,rows=7,gap=2;
+  const cs=Math.max(10,Math.min(13,Math.floor((availW-gap*(cols-1))/cols)));
+  const tw=cols*(cs+gap)-gap,th=rows*(cs+gap)-gap;
+  canvas.width=Math.round(tw*dpr);canvas.height=Math.round(th*dpr);
+  canvas.style.width=tw+'px';canvas.style.height=th+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,tw,th);
+  const t2=new Date();
+  const start=new Date(t2);start.setFullYear(t2.getFullYear()-1);
+  while(start.getDay()!==0)start.setDate(start.getDate()-1);
+  let col=0,row=0;const d=new Date(start);
+  const bg2=getComputedStyle(document.documentElement).getPropertyValue('--bg2').trim()||'#fef0e0';
+  while(d<=t2&&col<cols){
+    const k=dk(d);
+    const s=secId==='all'?dayScore(k):secScore(k,secId);
+    const x=col*(cs+gap),y=row*(cs+gap);
+    ctx.fillStyle=s===0?bg2:hex2rgba(mc,s<25?.22:s<50?.48:s<75?.72:1);
+    rr(ctx,x,y,cs,cs,Math.max(2,Math.round(cs*0.28)));
+    row++;if(row===7){row=0;col++;}
+    d.setDate(d.getDate()+1);
+  }
+  updateHmLegend(mc);
+}
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.fill();}
+
+// ═══════════════════════════════════════════════════════
+// PER-SECTION TREND
+// ═══════════════════════════════════════════════════════
+function openTrend(sid){trendSecId=sid;trendP='week';const sec=S.sections.find(s=>s.id===sid);document.getElementById('tmod-title').textContent=sec.icon+' '+sec.name;document.querySelectorAll('.tmodal .ptab').forEach(b=>b.classList.remove('active'));document.querySelector('.tmodal .ptab')?.classList.add('active');renderTrend();document.getElementById('trend-modal').classList.add('show');}
+function closeTrend(){document.getElementById('trend-modal').classList.remove('show');}
+function setTrendP(p,btn){trendP=p;document.querySelectorAll('.tmodal .ptab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTrend();}
+function renderTrend(){
+  if(!trendSecId)return;const sec=S.sections.find(s=>s.id===trendSecId);if(!sec)return;
+  const t=new Date(),days=trendP==='week'?7:trendP==='month'?30:365,step=trendP==='week'?1:trendP==='month'?2:10;
+  const bars=[],labels=[];
+  for(let i=days-1;i>=0;i--){const d=new Date(t);d.setDate(t.getDate()-i);bars.push(secScore(dk(d),trendSecId));if(trendP==='week')labels.push(['S','M','T','W','T','F','S'][d.getDay()]);else if(trendP==='month')labels.push(i%7===0?String(d.getDate()):'');else labels.push(i%30===0?d.toLocaleDateString('en',{month:'short'}):'');}
+  document.getElementById('tmod-chart').innerHTML=bars.filter((_,i)=>i%step===0).map((s,i)=>`<div class="bcol"><div class="bar" style="height:${Math.max(s,2)}%;background:${sec.color}45;border:1.5px solid ${sec.color}80"></div><div class="blbl">${labels.filter((_,j)=>j%step===0)[i]||''}</div></div>`).join('');
+  document.getElementById('tmod-habits').innerHTML=sec.habits.map((h,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px;color:var(--txt2)">${h}</span><span style="font-family:var(--font-num);font-size:12px;color:${sec.color}">${habStreak(trendSecId,i)}d 🔥</span></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// MEALS
+// ═══════════════════════════════════════════════════════
+function setMealView(v,btn){
+  mealView=v;
+  document.querySelectorAll('#page-meals .ptab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('meal-log-view').style.display=v==='log'?'block':'none';
+  document.getElementById('meal-stats-view').style.display=v!=='log'?'block':'none';
+  if(v!=='log')renderMealStats(v);
+}
+function renderMealStats(v){
+  const meals=S.meals||[];const today2=new Date();const content=document.getElementById('meal-stats-content');
+  if(v==='day'){
+    const dateStr=today();
+    const dayMeals=meals.filter(m=>m.date&&m.date.startsWith(dateStr));
+    const avgG=dayMeals.length?Math.round(dayMeals.reduce((s,m)=>s+(m.guilt||m.damage_score||5),0)/dayMeals.length):0;
+    content.innerHTML=`<div class="card cp" style="margin-bottom:12px"><div class="slbl">Today's Junk</div><div style="font-family:var(--font-num);font-size:28px;font-weight:500;color:var(--re)">${dayMeals.length} items</div><div style="font-size:12px;color:var(--txt3);margin-top:2px">Avg guilt: ${avgG}/10</div></div>`+
+    (dayMeals.length?dayMeals.map(m=>mealCardHtml(m)).join(''):'<div style="text-align:center;padding:24px;color:var(--txt3)">No junk today 🥗</div>');
+  } else if(v==='month'){
+    const mk=monthKey();const mMeals=meals.filter(m=>m.date&&m.date.startsWith(mk));
+    const totCal=mMeals.reduce((s,m)=>s+(m.guilt||m.damage_score||0),0);
+    // group by day
+    const byDay={};mMeals.forEach(m=>{if(!byDay[m.date])byDay[m.date]=[];byDay[m.date].push(m);});
+    content.innerHTML=`<div class="card cp" style="margin-bottom:12px"><div class="slbl">This Month</div><div style="font-family:var(--font-num);font-size:28px;font-weight:500;color:var(--re)">${totCal.toLocaleString()} kcal</div><div style="font-size:12px;color:var(--txt3);margin-top:2px">${mMeals.length} meals · ${Object.keys(byDay).length} cheat days</div></div>`+
+    Object.entries(byDay).sort((a,b)=>b[0].localeCompare(a[0])).map(([date,ms])=>`<div style="margin-bottom:10px"><div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">${fmts(new Date(date))}</div>${ms.map(m=>mealCardHtml(m)).join('')}</div>`).join('');
+  } else {
+    const yr=new Date().getFullYear();const yMeals=meals.filter(m=>m.date&&m.date.startsWith(String(yr)));
+    const totCal=yMeals.length;
+    const byMonth={};yMeals.forEach(m=>{const mo=m.date.slice(0,7);if(!byMonth[mo])byMonth[mo]=[];byMonth[mo].push(m);});
+    content.innerHTML=`<div class="card cp" style="margin-bottom:12px"><div class="slbl">This Year (${yr})</div><div style="font-family:var(--font-num);font-size:28px;font-weight:500;color:var(--re)">${totCal.toLocaleString()} kcal</div><div style="font-size:12px;color:var(--txt3);margin-top:2px">${yMeals.length} meals logged</div></div>`+
+    Object.entries(byMonth).sort((a,b)=>b[0].localeCompare(a[0])).map(([mo,ms])=>{const mcount=ms.length;const d=new Date(mo+'-01');return`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--txt3)">${d.toLocaleDateString('en',{month:'long'})}</div><div style="font-family:var(--font-num);font-size:12px;color:var(--re)">${mcount} items</div></div>${ms.map(m=>mealCardHtml(m)).join('')}</div>`;}).join('');
+  }
+}
+const MEAL_CAT_ICONS={junk:'🍕',sweet:'🍬',fried:'🍟',outside:'🏪',binge:'🫠',other:'😅'};
+const MEAL_CAT_COLORS={junk:'var(--re)',sweet:'var(--pk)',fried:'var(--ye)',outside:'var(--or)',binge:'var(--pu)',other:'var(--txt2)'};
+function mealCardHtml(m,i){
+  const d=m.date?new Date(m.date.slice(0,10)+'T12:00:00'):new Date();
+  const icon=MEAL_CAT_ICONS[m.cat]||'🍽️';
+  const guilt=m.guilt||m.damage_score||5;
+  const guiltColor=guilt>=8?'var(--re)':guilt>=5?'var(--ye)':'var(--gr)';
+  const catLabel=m.cat?m.cat.charAt(0).toUpperCase()+m.cat.slice(1):'Junk';
+  const realIdx=(S.meals||[]).indexOf(m);
+  return`<div class="mcard">
+    <div style="font-size:22px">${icon}</div>
+    <div class="minfo">
+      <div class="mname">${m.name||'?'}</div>
+      <div class="mmeta">${fmts(d)} · ${catLabel}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+      <div style="font-family:var(--font-num);font-size:13px;font-weight:500;color:${guiltColor}">😬 ${guilt}/10</div>
+      <button onclick="delMeal(${realIdx})" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:13px;padding:2px">✕</button>
+    </div>
+  </div>`;
+}
+function saveMealDirect(){
+  // called directly now - no AI
+  const name=document.getElementById('meal-inp').value.trim();
+  if(!name)return;
+  const mdate=document.getElementById('meal-date-inp').value||today();
+  const cat=document.getElementById('meal-cat')?.value||'junk';
+  const guilt=parseInt(document.getElementById('meal-guilt')?.value)||5;
+  return {name,date:mdate,cat,guilt,id:Date.now()};
+}
+function saveMeal(){
+  const m=saveMealDirect();if(!m)return;
+  S.meals.unshift(m);if(S.meals.length>200)S.meals.pop();
+  save();renderMeals();
+  document.getElementById('meal-inp').value='';
+  if(document.getElementById('meal-guilt'))document.getElementById('meal-guilt').value='';
+}
+function renderMeals(){
+  const l=document.getElementById('mealslist');if(!l)return;
+  if(!S.meals.length){l.innerHTML='<div style="text-align:center;padding:28px;color:var(--txt3);font-size:14px">No cheat meals logged yet 🥗</div>';return;}
+  l.innerHTML=S.meals.slice(0,20).map((m,i)=>mealCardHtml(m,i)).join('');
+}
+function delMeal(i){S.meals.splice(i,1);save();renderMeals();}
+
+// ═══════════════════════════════════════════════════════
+// MILK
+// ═══════════════════════════════════════════════════════
+function renderMilk(){
+  const yr=milkCalDate.getFullYear(),mo=milkCalDate.getMonth();
+  const mk=monthKey(milkCalDate);
+  document.getElementById('milk-title').textContent=milkCalDate.toLocaleDateString('en',{month:'long',year:'numeric'});
+  // Update forward button disabled state
+  const now=new Date();
+  const isCurrentMonth=(yr===now.getFullYear()&&mo===now.getMonth());
+  const nextBtn=document.getElementById('milk-next-btn');
+  if(nextBtn){nextBtn.style.opacity=isCurrentMonth?'0.3':'1';nextBtn.style.cursor=isCurrentMonth?'default':'pointer';}
+  const rate=parseFloat(S.milk.pricePerDay)||35;
+  if(S.milk.pricePerDay)document.getElementById('milk-rate').value=S.milk.pricePerDay;
+  if(S.milk.defQty)document.getElementById('milk-def-qty').value=S.milk.defQty;
+  const first=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate();
+  const today2=new Date(),tstr=dk(today2);
+  const grid=document.getElementById('milk-grid');grid.innerHTML='';
+  for(let i=0;i<first;i++){const e=document.createElement('div');e.className='milk-day empty';grid.appendChild(e);}
+  let totalMl=0,days=0;
+  for(let d=1;d<=dim;d++){
+    const date=new Date(yr,mo,d),dkey=dk(date),isFuture=date>today2,isToday=dkey===tstr;
+    const mlBought=S.milk.days&&S.milk.days[dkey]?S.milk.days[dkey]:0;
+    if(mlBought>0){totalMl+=mlBought;days++;}
+    let cls='milk-day';if(mlBought>0)cls+=' bought';if(isToday)cls+=' today-m';if(isFuture)cls+=' future';
+    const el=document.createElement('div');el.className=cls;
+    el.innerHTML=`<span>${d}</span>${mlBought>0?`<span class="milk-qty-lbl">${mlBought>=1000?(mlBought/1000)+'L':mlBought+'ml'}</span>`:''}`;
+    if(!isFuture)el.onclick=()=>{
+      if(mlBought===0){
+        // First tap: apply default qty directly, no modal
+        const defQty=parseInt(S.milk.defQty)||500;
+        if(!S.milk.days)S.milk.days={};
+        S.milk.days[dkey]=defQty;
+        save();renderMilk();
+      } else {
+        // Already marked: open modal to change or remove
+        openQtyModal(dkey,mlBought);
+      }
+    };
+    grid.appendChild(el);
+  }
+  const totalAmt=totalMl/1000*rate;
+  const isPaid=S.milk.paidMonths&&S.milk.paidMonths.includes(mk);
+  document.getElementById('milk-days').textContent=days;
+  document.getElementById('milk-liters').textContent=(totalMl/1000).toFixed(1)+'L';
+  document.getElementById('milk-amt').textContent=fmtINR(Math.round(totalAmt));
+  document.getElementById('milk-pend').textContent=isPaid?'✓ Paid':fmtINR(Math.round(totalAmt));
+  renderMilkHistory();
+}
+function openQtyModal(dkey,current){
+  qtyModalDate=dkey;
+  document.getElementById('qty-modal-date').textContent=dkey+(current>0?' · Currently: '+(current>=1000?(current/1000)+'L':current+'ml'):'');
+  document.getElementById('qty-modal').classList.add('show');
+}
+function closeQtyModal(){document.getElementById('qty-modal').classList.remove('show');qtyModalDate=null;}
+function setQty(ml){if(!qtyModalDate)return;if(!S.milk.days)S.milk.days={};S.milk.days[qtyModalDate]=ml;save();closeQtyModal();renderMilk();}
+function setQtyCustom(){const v=parseFloat(document.getElementById('qty-custom').value);if(v>0)setQty(v);}
+function removeMilkDay(){if(!qtyModalDate)return;if(S.milk.days)delete S.milk.days[qtyModalDate];save();closeQtyModal();renderMilk();}
+function markMilkToday(){
+  const defQty=parseInt(S.milk.defQty)||500;
+  const todayKey=today();
+  const current=S.milk.days&&S.milk.days[todayKey]?S.milk.days[todayKey]:0;
+  // If already marked, open modal to change; if default qty set and not yet marked, apply directly
+  if(current===0&&defQty){
+    if(!S.milk.days)S.milk.days={};
+    S.milk.days[todayKey]=defQty;
+    save();renderMilk();
+  } else {
+    openQtyModal(todayKey,current);
+  }
+}
+function markMilkPaid(){const mk=monthKey(milkCalDate);if(!S.milk.paidMonths)S.milk.paidMonths=[];const idx=S.milk.paidMonths.indexOf(mk);if(idx>=0)S.milk.paidMonths.splice(idx,1);else S.milk.paidMonths.push(mk);save();renderMilk();}
+function saveMilkSettings(){S.milk.pricePerDay=parseFloat(document.getElementById('milk-rate').value)||35;S.milk.defQty=parseInt(document.getElementById('milk-def-qty').value)||500;save();renderMilk();}
+function milkPrev(){
+  let y=milkCalDate.getFullYear(),m=milkCalDate.getMonth()-1;
+  if(m<0){m=11;y--;}
+  milkCalDate=new Date(y,m,1);
+  renderMilk();
+}
+function milkNext(){
+  let y=milkCalDate.getFullYear(),m=milkCalDate.getMonth()+1;
+  if(m>11){m=0;y++;}
+  const now=new Date();
+  const nowY=now.getFullYear(),nowM=now.getMonth();
+  if(y<nowY||(y===nowY&&m<=nowM)){
+    milkCalDate=new Date(y,m,1);
+    renderMilk();
+  }
+}
+function renderMilkHistory(){
+  const list=document.getElementById('milk-history');if(!list)return;
+  const rate=parseFloat(S.milk.pricePerDay)||35;
+  const today2=new Date();const months=new Set();
+  Object.keys(S.milk.days||{}).forEach(k=>months.add(k.slice(0,7)));
+  for(let i=0;i<8;i++){const d=new Date(today2);d.setDate(1);d.setMonth(today2.getMonth()-i);months.add(monthKey(d));}
+  list.innerHTML=[...months].sort().reverse().map(mk=>{
+    const days=Object.entries(S.milk.days||{}).filter(([k])=>k.startsWith(mk));
+    const totalMl=days.reduce((s,[,v])=>s+v,0);const totalAmt=totalMl/1000*rate;
+    const paid=S.milk.paidMonths&&S.milk.paidMonths.includes(mk);
+    const d=new Date(mk+'-01');
+    return`<div class="milk-month-row"><div><div style="font-family:var(--font-head);font-size:14px;font-weight:700">${d.toLocaleDateString('en',{month:'long',year:'numeric'})}</div><div style="font-size:11px;color:var(--txt3);font-family:var(--font-num);margin-top:2px">${days.length} days · ${(totalMl/1000).toFixed(1)}L · ${fmtINR(Math.round(totalAmt))}</div></div><div style="font-family:var(--font-num);font-size:15px;font-weight:500;color:${paid?'var(--gr)':'var(--or)'}">${paid?'✓ Paid':fmtINR(Math.round(totalAmt))}</div></div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// FINANCE
+// ═══════════════════════════════════════════════════════
+function renderFinance(){
+  const today2=new Date(),tabs=[];
+  for(let i=5;i>=0;i--){const d=new Date(today2);d.setDate(1);d.setMonth(today2.getMonth()-i);tabs.push({mk:monthKey(d),label:d.toLocaleDateString('en',{month:'short',year:'2-digit'})});}
+  if(!curFinMonth)curFinMonth=monthKey();
+  document.getElementById('fin-month-tabs').innerHTML=tabs.map(t=>`<div class="fin-mtab ${curFinMonth===t.mk?'active':''}" onclick="setFinMonth('${t.mk}',this)">${t.label}</div>`).join('');
+  // cat sel populated in openAddExpense modal
+  const mEntries=(S.finance.entries||[]).filter(e=>e.date&&e.date.startsWith(curFinMonth));
+  const totalSpent=mEntries.reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
+  const budget=S.finance.categories.reduce((s,c)=>s+(parseFloat(c.budget)||0),0)||1;
+  const pct=Math.min(100,Math.round(totalSpent/budget*100));
+  const over=totalSpent>budget;
+  document.getElementById('fin-spent').textContent=fmtINR(Math.round(totalSpent));
+  document.getElementById('fin-bgt-desc').textContent=`of ${fmtINR(budget)} budget${over?' ⚠️ OVER BUDGET!':''}`;
+  document.getElementById('fin-bbar').style.width=pct+'%';
+  document.getElementById('fin-bbar').style.background=over?'#fca5a5':'rgba(255,255,255,.9)';
+  document.getElementById('fin-ring').style.strokeDashoffset=151-(151*pct/100);
+  document.getElementById('fin-ring').style.stroke=over?'#fca5a5':'rgba(255,255,255,.85)';
+  document.getElementById('fin-ring-pct').textContent=pct+'%';
+  const bgtTotalEl=document.getElementById('fin-bgt-total');
+  if(bgtTotalEl)bgtTotalEl.textContent='of '+fmtINR(budget);
+  // category cards
+  document.getElementById('fin-cat-grid').innerHTML=S.finance.categories.map(cat=>{
+    const spent=mEntries.filter(e=>e.catId===cat.id).reduce((s,e)=>s+(parseFloat(e.amount)||0),0);
+    const bpct=cat.budget?Math.min(100,Math.round(spent/cat.budget*100)):0;
+    const catOver=cat.budget&&spent>cat.budget;
+    const rem=Math.max(0,(cat.budget||0)-spent);
+    return`<div class="fin-cat-card${catOver?' over-bgt':bpct>=(cat.alert||80)?' over-bgt':''}" onclick="openAddExpense('${cat.id}')" >
+      <div class="fcc-top"><div class="fcc-icon">${cat.icon}</div><div class="fcc-spent" style="color:${catOver?'var(--re)':cat.color}">${fmtINR(Math.round(spent))}</div></div>
+      <div class="fcc-name">${cat.name}</div>
+      <div class="fcc-bar"><div class="fcc-fill" style="width:${bpct}%;background:${catOver?'#dc2626':cat.color}"></div></div>
+      <div class="fcc-rem" style="color:${catOver?'var(--re)':bpct>=(cat.alert||80)?'var(--ye)':'var(--txt3)'}">${catOver?'⚠️ Over by '+fmtINR(Math.round(spent-cat.budget)):'Left: '+fmtINR(Math.round(rem))}</div>
+    </div>`;
+  }).join('');
+  // category filter tabs
+  document.getElementById('cat-filter-tabs').innerHTML=`<div class="cat-ftab ${catFilterId==='all'?'active':''}" onclick="setCatFilter('all')">All</div>`+S.finance.categories.map(c=>`<div class="cat-ftab ${catFilterId===c.id?'active':''}" onclick="setCatFilter('${c.id}')">${c.icon} ${c.name.split(' ')[0]}</div>`).join('');
+  renderFinEntries(mEntries);
+}
+function setCatFilter(id){catFilterId=id;document.querySelectorAll('.cat-ftab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.cat-ftab').forEach(t=>{if(t.textContent.includes(id==='all'?'All':S.finance.categories.find(c=>c.id===id)?.name?.split(' ')[0]||''))t.classList.add('active');});renderFinEntries((S.finance.entries||[]).filter(e=>e.date&&e.date.startsWith(curFinMonth)));}
+function renderFinEntries(mEntries){
+  const filtered=catFilterId==='all'?mEntries:mEntries.filter(e=>e.catId===catFilterId);
+  const sorted=[...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('fin-entries').innerHTML=sorted.length?sorted.map(e=>{
+    const cat=S.finance.categories.find(c=>c.id===e.catId)||{name:'Other',icon:'💸',color:'#888'};
+    const idx=S.finance.entries.indexOf(e);
+    return`<div class="fin-entry-item"><div class="fei-top"><div class="fei-cat"><span style="font-size:17px">${cat.icon}</span><span class="fei-badge" style="background:${hex2rgba(cat.color,.12)};color:${cat.color}">${cat.name}</span></div><div style="display:flex;align-items:center;gap:8px"><div class="fei-amt" style="color:${cat.color}">${fmtINR(parseFloat(e.amount)||0)}</div><button onclick="delFinEntry(${idx})" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:14px;padding:2px">✕</button></div></div>${e.note?`<div class="fei-note">${e.note}</div>`:''}<div class="fei-date">${e.date}</div></div>`;
+  }).join(''):'<div style="text-align:center;padding:20px;color:var(--txt3);font-size:14px">No expenses yet</div>';
+}
+function setFinMonth(mk,el){curFinMonth=mk;document.querySelectorAll('.fin-mtab').forEach(t=>t.classList.remove('active'));el.classList.add('active');catFilterId='all';renderFinance();}
+function openAddExpense(catId){
+  // populate cat sel
+  const sel=document.getElementById('fin-cat-sel');
+  sel.innerHTML=S.finance.categories.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+  if(catId)sel.value=catId;
+  document.getElementById('fin-date').value=curFinMonth===monthKey()?today():curFinMonth+'-01';
+  document.getElementById('fin-amt').value='';
+  document.getElementById('fin-note').value='';
+  const cat=catId?S.finance.categories.find(c=>c.id===catId):null;
+  document.getElementById('aem-title').textContent=cat?`Add to ${cat.name}`:'Add Expense';
+  document.getElementById('add-expense-modal').classList.add('show');
+}
+function closeAddExpense(){document.getElementById('add-expense-modal').classList.remove('show');}
+function saveFinBudget(){const v=parseFloat(document.getElementById('fin-bgt-inp').value);if(v>0){S.finance.monthBudget=v;save();renderFinance();}}
+function addFinEntry(){
+  const catId=document.getElementById('fin-cat-sel').value,amount=document.getElementById('fin-amt').value;
+  const date=document.getElementById('fin-date').value||today(),note=document.getElementById('fin-note').value.trim();
+  if(!amount||isNaN(parseFloat(amount)))return;
+  if(!S.finance.entries)S.finance.entries=[];
+  S.finance.entries.push({catId,amount:parseFloat(amount),date,note,id:Date.now()});
+  document.getElementById('fin-amt').value='';document.getElementById('fin-note').value='';
+  save();renderFinance();closeAddExpense();
+}
+function delFinEntry(i){if(confirm('Delete?')){S.finance.entries.splice(i,1);save();renderFinance();}}
+
+// ═══════════════════════════════════════════════════════
+// CYCLE
+// ═══════════════════════════════════════════════════════
+function renderCycle(){
+  const yr=calDate.getFullYear(),mo=calDate.getMonth();
+  document.getElementById('calmonth').textContent=calDate.toLocaleDateString('en',{month:'long',year:'numeric'});
+  const first=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate();
+  const today2=new Date(),tstr=dk(today2);
+  const periods=S.cycle.periods||[];const lastP=periods.length?new Date(periods[periods.length-1]):null;
+  const cyLen=S.cycle.cycleLength||28,perLen=S.cycle.periodLength||5;
+  function phase(d){if(!lastP)return null;const diff=Math.floor((d-lastP)/86400000),day=((diff%cyLen)+cyLen)%cyLen;if(day<perLen)return'period';if(day>=13&&day<=15)return'ovulation';if(day>=11&&day<=16)return'fertile';return null;}
+  if(lastP){
+    const next=new Date(lastP);next.setDate(next.getDate()+cyLen);
+    document.getElementById('nextper').textContent=fmts(next);document.getElementById('nextsub').textContent='In ~'+Math.max(0,Math.round((next-today2)/86400000))+' days';
+    const diff=Math.floor((today2-lastP)/86400000),day=((diff%cyLen)+cyLen)%cyLen;
+    const ph=[{r:[0,perLen-1],n:'Menstrual Phase',d:'Low energy is normal. Rest, gentle movement, warmth.'},{r:[perLen,10],n:'Follicular Phase',d:'Energy rising! Great for new habits and intense workouts.'},{r:[11,16],n:'Ovulation Phase',d:'Peak energy and confidence. Best for challenges.'},{r:[17,cyLen-1],n:'Luteal Phase',d:'PMS may appear. Focus on self-care and lighter exercise.'}].find(p=>day>=p.r[0]&&day<=p.r[1]);
+    if(ph){document.getElementById('hphase').textContent=ph.n+' (Day '+(day+1)+')';document.getElementById('hdesc').textContent=ph.d;}
+  }
+  const grid=document.getElementById('calgrid');grid.innerHTML='';
+  for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cday';grid.appendChild(e);}
+  for(let d=1;d<=dim;d++){
+    const date=new Date(yr,mo,d),dkey=dk(date),ph=phase(date),isMk=periods.includes(dkey),isToday=dkey===tstr,isPred=lastP&&!isMk&&ph==='period'&&date>today2;
+    let cls='cday';if(isMk)cls+=' period';else if(isPred)cls+=' predicted';else if(ph==='ovulation')cls+=' ovulation';else if(ph==='fertile')cls+=' fertile';if(isToday)cls+=' today-c';
+    const el=document.createElement('div');el.className=cls;el.textContent=d;el.onclick=()=>togPeriod(dkey);grid.appendChild(el);
+  }
+  const ts=dk(today2);
+  document.getElementById('symtags').innerHTML=SYMS.map(s=>`<button class="symtag ${(S.cycle.symptoms[ts]||[]).includes(s)?'active':''}" onclick="togSym('${s}')">${s}</button>`).join('');
+  document.getElementById('moodtags').innerHTML=MOODS.map(m=>`<button class="symtag ${(S.cycle.moods[ts]||[]).includes(m)?'active':''}" onclick="togMood('${m.replace(/'/g,"\\'")}')">${m}</button>`).join('');
+}
+function togPeriod(dk2){const p=S.cycle.periods||[],i=p.indexOf(dk2);if(i>=0)p.splice(i,1);else p.push(dk2);S.cycle.periods=p.sort();save();renderCycle();}
+function togSym(s){const ts=dk(new Date());if(!S.cycle.symptoms[ts])S.cycle.symptoms[ts]=[];const a=S.cycle.symptoms[ts],i=a.indexOf(s);if(i>=0)a.splice(i,1);else a.push(s);save();renderCycle();}
+function togMood(m){const ts=dk(new Date());if(!S.cycle.moods[ts])S.cycle.moods[ts]=[];const a=S.cycle.moods[ts],i=a.indexOf(m);if(i>=0)a.splice(i,1);else a.push(m);save();renderCycle();}
+function changeMonth(dir){calDate.setMonth(calDate.getMonth()+dir);renderCycle();}
+
+// ═══════════════════════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════════════════════
+function loadProfile(){
+  const p=S.profile||{};
+  if(p.name)document.getElementById('pf-name').value=p.name;
+  if(p.nick&&document.getElementById('pf-nick'))document.getElementById('pf-nick').value=p.nick;
+  if(p.age)document.getElementById('pf-age').value=p.age;
+  if(p.height)document.getElementById('pf-ht').value=p.height;if(p.weight)document.getElementById('pf-wt').value=p.weight;
+  if(p.avatar)document.getElementById('pf-av').value=p.avatar;if(p.gender)document.getElementById('pf-gen').value=p.gender;
+  if(p.activity)document.getElementById('pf-act').value=p.activity;if(p.goal)document.getElementById('pf-goal').value=p.goal;
+  document.getElementById('pnm').textContent=p.name||'Your Name';document.getElementById('pav').textContent=p.avatar||'🧑';
+}
+function saveProf(){
+  S.profile={
+    name:document.getElementById('pf-name').value,
+    nick:document.getElementById('pf-nick')?document.getElementById('pf-nick').value:'',
+    avatar:document.getElementById('pf-av').value,
+    age:document.getElementById('pf-age').value,
+    gender:document.getElementById('pf-gen').value,
+    height:document.getElementById('pf-ht').value,
+    weight:document.getElementById('pf-wt').value,
+    activity:document.getElementById('pf-act').value,
+    goal:document.getElementById('pf-goal').value
+  };
+  document.getElementById('pnm').textContent=S.profile.name||'Your Name';
+  document.getElementById('pav').textContent=S.profile.avatar||'🧑';
+  updateGreeting();
+  updateHMenuProfile();save();
+}
+function calcHealth(){
+  const p=S.profile,h=parseFloat(p.height),w=parseFloat(p.weight),age=parseFloat(p.age)||25;
+  if(!h||!w){['bmi-v','ibw-v','tdee-v'].forEach(id=>document.getElementById(id).textContent='—');document.getElementById('bmicat').textContent='—';document.getElementById('hscore').textContent='—';document.getElementById('ptg').textContent='Set up below';return;}
+  const bmi=w/((h/100)**2);
+  document.getElementById('bmi-v').textContent=(Math.round(bmi*10)/10);
+  document.getElementById('ibw-v').textContent=Math.round(p.gender==='male'?50+0.9*(h-152.4):45.5+0.9*(h-152.4))+'kg';
+  const bmr=p.gender==='male'?(10*w)+(6.25*h)-(5*age)+5:(10*w)+(6.25*h)-(5*age)-161;
+  document.getElementById('tdee-v').textContent=Math.round(bmr*(parseFloat(p.activity)||1.55));
+  const cats=[{m:18.5,l:'Underweight',c:'#2e7ef0'},{m:25,l:'Normal weight ✓',c:'#22a06b'},{m:30,l:'Overweight',c:'#d4820a'},{m:99,l:'Obese',c:'#dc2626'}];
+  const cat=cats.find(c=>bmi<c.m)||cats[3];
+  document.getElementById('bmicat').textContent=cat.l;document.getElementById('bmicat').style.color=cat.c;
+  document.getElementById('bmarrow').style.left=Math.min(100,Math.max(0,((bmi-15)/25)*100))+'%';
+  const hs=Math.min(100,Math.round((bmi>=18.5&&bmi<25?40:bmi>=25&&bmi<30?25:15)+Math.min(40,S.streak*4)+Math.min(20,dayScore(dk(new Date()))/5)));
+  document.getElementById('hscore').textContent=hs;
+  document.getElementById('ptg').textContent=['Keep building! 💪','Great progress! 🌟','Doing well! 🚀','Excellent! 🏆'][Math.min(3,Math.floor(hs/25))];
+}
+async function getHlthInsight(){
+  const p=S.profile;if(!p.height||!p.weight){document.getElementById('hlth-insight').textContent='Please fill in height and weight first!';return;}
+  document.getElementById('hlth-insight').textContent='Getting insight…';
+  try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:`Health tip for: Age ${p.age}, ${p.gender}, ${p.height}cm, ${p.weight}kg, goal: ${p.goal}, activity: ${p.activity}x. Streak: ${S.streak} days. 2-3 warm encouraging sentences.`}]})});const data=await r.json();document.getElementById('hlth-insight').textContent=data.content[0].text;}
+  catch(e){const b=(parseFloat(p.weight)/((parseFloat(p.height)/100)**2)).toFixed(1);document.getElementById('hlth-insight').textContent=`Your BMI of ${b} paired with your ${S.streak}-day streak is a great foundation. Keep going! 💪`;}
+}
+
+// ═══════════════════════════════════════════════════════
+// BACKDATE ENTRY
+// ═══════════════════════════════════════════════════════
+function loadBackdate(){
+  const dateStr=document.getElementById('bd-date-picker').value;if(!dateStr)return;
+  const d=new Date(dateStr);const content=document.getElementById('bd-content');
+  const score=dayScore(dateStr);
+  content.innerHTML=`<div class="card cp" style="margin:0 20px 12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div><div style="font-family:var(--font-head);font-size:15px;font-weight:700">${fmts(d)}</div><div style="font-size:12px;color:var(--txt3);font-family:var(--font-num)">${score}% complete</div></div>
+      <div style="font-family:var(--font-num);font-size:24px;font-weight:500;color:${score>=80?'var(--gr)':score>=50?'var(--or)':'var(--re)'}">${score}%</div>
+    </div>
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Tap to toggle habits</div>
+    ${S.sections.filter(s=>s.enabled).map(sec=>`
+      <div style="margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:${sec.color}">${sec.icon} ${sec.name}</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${sec.habits.map((h,i)=>{
+            const done=getH(dateStr,sec.id,i);
+            return`<div onclick="bdToggleHabit('${sec.id}',${i},'${dateStr}')" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border:1.5px solid ${done?sec.color:'var(--border)'};background:${done?hex2rgba(sec.color,.1):'var(--bg2)'};cursor:pointer">
+              <div style="width:22px;height:22px;border-radius:7px;border:2px solid ${done?sec.color:'var(--border2)'};background:${done?sec.color:'transparent'};display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0">${done?'✓':''}</div>
+              <span style="font-size:13px;font-weight:${done?'600':'400'};color:${done?sec.color:'var(--txt)'}">${h}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+function bdToggleHabit(sid,idx,dateStr){
+  if(!S.habits[dateStr])S.habits[dateStr]={};
+  const k=sid+'_'+idx;S.habits[dateStr][k]=!S.habits[dateStr][k];
+  save();loadBackdate();renderDateStrip();calcStreak();updateScore();updateTodayMini();
+}
+
+// ═══════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════
+function renderSettings(){
+  // Sync pref toggles
+  const cycTog=document.getElementById('cyc-tog');const qtTog=document.getElementById('qt-tog');
+  if(cycTog)cycTog.classList.toggle('on',!!S.prefs?.showCycle);
+  if(qtTog)qtTog.classList.toggle('on',S.prefs?.quotes!==false);
+  loadGhCreds();
+  updateStorageMeter();
+  document.getElementById('sec-toggles').innerHTML=S.sections.map((sec,i)=>`
+    <div class="stng">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;background:${hex2rgba(sec.color,.12)}">${sec.icon}</div>
+        <div><div class="slbl2">${sec.name}</div><div class="ssub">${sec.habits.length} habits</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${sec.id.startsWith('custom_')?`<button onclick="delSec(${i})" style="background:var(--res);border:none;border-radius:7px;color:var(--re);padding:4px 8px;font-size:11px;cursor:pointer;font-family:var(--font-head);font-weight:700">Del</button>`:''}
+        <div class="tog ${sec.enabled?'on':''}" onclick="togSecEn(${i})"></div>
+      </div>
+    </div>`).join('');
+  document.getElementById('fin-cat-settings').innerHTML=S.finance.categories.map((cat,i)=>`
+    <div class="stng">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;background:${hex2rgba(cat.color,.12)}">${cat.icon}</div>
+        <div><div class="slbl2">${cat.name}</div><div class="ssub">Budget: ${fmtINR(cat.budget||0)}/mo · Alert at ${cat.alert||80}%</div></div>
+      </div>
+      <button onclick="delFinCat(${i})" style="background:var(--res);border:none;border-radius:7px;color:var(--re);padding:4px 8px;font-size:11px;cursor:pointer;font-family:var(--font-head);font-weight:700">Del</button>
+    </div>`).join('');
+  document.getElementById('habit-mgr').innerHTML=S.sections.filter(s=>s.enabled).map(sec=>`
+    <div class="hmc">
+      <div class="hmhdr"><div class="hmhdr-t">${sec.icon} ${sec.name}</div><div style="font-size:10px;color:var(--txt3);font-family:var(--font-head);font-weight:700">${sec.habits.length}</div></div>
+      ${sec.habits.map((h,hi)=>`<div class="hrow"><span class="hrn">${h}</span><button class="bdel" onclick="delHabit('${sec.id}',${hi})">✕</button></div>`).join('')}
+      <div class="addrow"><input class="addinp" id="ah-${sec.id}" placeholder="Add habit…" onkeydown="if(event.key==='Enter')addHabit('${sec.id}')"><button class="btnadd" onclick="addHabit('${sec.id}')">+ Add</button></div>
+    </div>`).join('');
+  renderShopCatSettings();
+}
+function renderShopCatSettings(){
+  if(!S.shop)S.shop={items:[],categories:['Groceries','Personal Care','Clothes','Electronics','Home','Medicine','Other']};
+  const el=document.getElementById('shop-cat-settings');if(!el)return;
+  el.innerHTML=(S.shop.categories||[]).map((cat,i)=>`
+    <div class="stng">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--bg2)">${SHOP_CAT_ICONS[cat]||'📦'}</div>
+        <div class="slbl2">${cat}</div>
+      </div>
+      <button onclick="delShopCat(${i})" style="background:var(--res);border:none;border-radius:7px;color:var(--re);padding:4px 8px;font-size:11px;cursor:pointer;font-family:var(--font-head);font-weight:700">Del</button>
+    </div>`).join('');
+}
+function addShopCat(){
+  const inp=document.getElementById('shop-cat-new-inp'),v=inp.value.trim();if(!v)return;
+  if(!S.shop)S.shop={items:[],categories:[]};
+  if(!S.shop.categories)S.shop.categories=[];
+  if(S.shop.categories.includes(v)){alert('Category already exists');return;}
+  S.shop.categories.push(v);save();inp.value='';renderShopCatSettings();renderShop();
+}
+function delShopCat(i){
+  if(confirm('Delete this category? Items in it will stay but lose their category.')){
+    S.shop.categories.splice(i,1);save();renderShopCatSettings();renderShop();
+  }
+}
+function togSecEn(i){S.sections[i].enabled=!S.sections[i].enabled;save();renderSettings();renderSections();updateScore();buildHmPills();}
+function delSec(i){if(confirm('Delete?')){S.sections.splice(i,1);save();renderSettings();renderSections();updateScore();buildHmPills();}}
+function delFinCat(i){if(confirm('Delete category?')){S.finance.categories.splice(i,1);save();renderSettings();renderFinance();}}
+function addHabit(sid){const inp=document.getElementById('ah-'+sid),v=inp.value.trim();if(!v)return;const sec=S.sections.find(s=>s.id===sid);if(sec){sec.habits.push(v);save();renderSettings();renderSections();inp.value='';}}
+function delHabit(sid,hi){const sec=S.sections.find(s=>s.id===sid);if(sec){sec.habits.splice(hi,1);save();renderSettings();renderSections();updateScore();}}
+function savePrefs(){
+  S.prefs.showCycle=document.getElementById('cyc-tog').classList.contains('on');
+  S.prefs.quotes=document.getElementById('qt-tog').classList.contains('on');
+  document.getElementById('nav-cycle').style.display=S.prefs.showCycle?'':'none';
+  document.getElementById('qcard').style.display=S.prefs.quotes?'':'none';
+  save();
+}
+function exportData(){
+  if(!S.meta)S.meta={};
+  S.meta.lastExport=new Date().toISOString();
+  save();
+  const pid=getPid()||'data';
+  const json=JSON.stringify(S,null,2);
+  const filename=`lifepulse-${pid}.json`;
+
+  // Method 1: Standard blob download (works on GitHub Pages / direct file)
+  try{
+    const b=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(b);
+    const a=document.createElement('a');
+    a.href=url;a.download=filename;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},1000);
+    dismissReminder();
+    return;
+  }catch(e){}
+
+  // Method 2: data: URI download (fallback for some browsers)
+  try{
+    const dataUri='data:application/json;charset=utf-8,'+encodeURIComponent(json);
+    const a=document.createElement('a');
+    a.href=dataUri;a.download=filename;
+    document.body.appendChild(a);a.click();
+    document.body.removeChild(a);
+    dismissReminder();
+    return;
+  }catch(e){}
+
+  // Method 3: Show in a modal so user can copy-paste manually (last resort)
+  showExportModal(json,filename);
+}
+
+function showExportModal(json,filename){
+  // Remove any existing modal
+  const existing=document.getElementById('export-fallback-modal');
+  if(existing)existing.remove();
+  const modal=document.createElement('div');
+  modal.id='export-fallback-modal';
+  modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center';
+  modal.innerHTML=`
+    <div style="background:var(--card);border-radius:24px 24px 0 0;padding:24px 20px;width:100%;max-height:80vh;overflow-y:auto">
+      <div style="font-family:var(--font-head);font-size:16px;font-weight:800;margin-bottom:6px">Export Your Data 💾</div>
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:14px;line-height:1.6">
+        Automatic download was blocked by this environment.<br>
+        <strong>Choose one of these options:</strong>
+      </div>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('export-json-ta').value).then(()=>{this.textContent='✅ Copied!';this.style.background='var(--gr)'})" style="width:100%;background:var(--or);color:#fff;border:none;border-radius:12px;font-family:var(--font-head);font-size:13px;font-weight:700;padding:12px;cursor:pointer;margin-bottom:10px">
+        📋 Copy JSON to Clipboard
+      </button>
+      <div style="font-size:12px;color:var(--txt3);margin-bottom:8px">Then paste into a .txt or .json file on your phone. Or select all text below and copy:</div>
+      <textarea id="export-json-ta" style="width:100%;height:120px;font-family:var(--font-num);font-size:10px;border:1.5px solid var(--border);border-radius:10px;padding:10px;background:var(--bg2);color:var(--txt);resize:none" readonly>${json.replace(/</g,'&lt;')}</textarea>
+      <div style="font-size:12px;color:var(--txt2);margin-top:10px;padding:10px;background:var(--yes);border-radius:10px;border:1px solid var(--ye)">
+        💡 <strong>This only happens in preview mode.</strong> When you open the app on your phone or via GitHub Pages, the download button will work normally.
+      </div>
+      <button onclick="document.getElementById('export-fallback-modal').remove()" style="width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;font-family:var(--font-head);font-size:13px;font-weight:700;padding:12px;cursor:pointer;margin-top:10px;color:var(--txt2)">Close</button>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  // auto-select textarea
+  setTimeout(()=>{const ta=document.getElementById('export-json-ta');if(ta)ta.select();},100);
+}
+function clearData(){
+  if(!confirm('Clear ALL data for this profile? This cannot be undone. Export first!'))return;
+  localStorage.removeItem(PROFILE_KEY);
+  localStorage.removeItem('lp5_pid');
+  location.reload();
+}
+
+// ═══════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════
+let newSecEmoji2='🌟',newSecColor2='#f4732a',newFcEmoji2='💸',newFcColor2='#22a06b';
+function setupModals(){
+  document.getElementById('epicker').innerHTML=EMOJIS.map(e=>`<div class="eopt" onclick="pickE(this,'${e}','sec')">${e}</div>`).join('');
+  document.getElementById('cpicker').innerHTML=COLORS.map(c=>`<div class="copt" style="background:${c}" onclick="pickC(this,'${c}','sec')"></div>`).join('');
+  document.getElementById('fc-epicker').innerHTML=EMOJIS.map(e=>`<div class="eopt" onclick="pickE(this,'${e}','fc')">${e}</div>`).join('');
+  document.getElementById('fc-cpicker').innerHTML=COLORS.map(c=>`<div class="copt" style="background:${c}" onclick="pickC(this,'${c}','fc')"></div>`).join('');
+}
+function pickE(el,e,type){if(type==='sec')newSecEmoji2=e;else newFcEmoji2=e;el.closest('.egrid').querySelectorAll('.eopt').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');}
+function pickC(el,c,type){if(type==='sec')newSecColor2=c;else newFcColor2=c;el.closest('.cgrid').querySelectorAll('.copt').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');}
+function openNewSec(){document.getElementById('newsec-modal').classList.add('show');}
+function closeNewSec(){document.getElementById('newsec-modal').classList.remove('show');}
+function createSec(){const name=document.getElementById('nsname').value.trim();if(!name)return;S.sections.push({id:'custom_'+Date.now(),name,icon:newSecEmoji2,color:newSecColor2,enabled:true,habits:['First habit']});save();renderSettings();renderSections();updateScore();closeNewSec();document.getElementById('nsname').value='';buildHmPills();}
+function openNewFinCat(){document.getElementById('newfincat-modal').classList.add('show');}
+function closeNewFinCat(){document.getElementById('newfincat-modal').classList.remove('show');}
+function createFinCat(){const name=document.getElementById('fc-name').value.trim(),budget=parseFloat(document.getElementById('fc-budget').value)||0,alert2=parseFloat(document.getElementById('fc-alert').value)||80;if(!name)return;S.finance.categories.push({id:'fc_'+Date.now(),name,icon:newFcEmoji2,color:newFcColor2,budget,alert:alert2});save();renderSettings();renderFinance();closeNewFinCat();document.getElementById('fc-name').value='';document.getElementById('fc-budget').value='';}
+['newsec-modal','newfincat-modal','add-expense-modal'].forEach(id=>{document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});});
+document.getElementById('trend-modal').addEventListener('click',function(e){if(e.target===this)closeTrend();});
+
+// ═══════════════════════════════════════════════════════
+// SHOPPING LIST
+let curShopMonth=null,shopFilterCat='all',shopFilterStatus='all';
+const SHOP_CAT_COLORS={'Groceries':'#22a06b','Personal Care':'#e0368c','Clothes':'#7c3aed','Electronics':'#2e7ef0','Home':'#d4820a','Medicine':'#dc2626','Other':'#0891b2'};
+const SHOP_CAT_ICONS={'Groceries':'🥬','Personal Care':'🧴','Clothes':'👗','Electronics':'📱','Home':'🏠','Medicine':'💊','Other':'📦'};
+const PRIORITY_COLORS={normal:'var(--txt3)',urgent:'var(--re)',optional:'var(--bl)'};
+const PRIORITY_LABELS={normal:'Normal',urgent:'Urgent 🔴',optional:'Optional'};
+let shopSelCat='Groceries';
+
+function renderShop(){
+  if(!S.shop)S.shop={items:[],categories:['Groceries','Personal Care','Clothes','Electronics','Home','Medicine','Other']};
+  if(!curShopMonth)curShopMonth=monthKey();
+  const today2=new Date(),tabs=[];
+  for(let i=3;i>=0;i--){const d=new Date(today2);d.setDate(1);d.setMonth(today2.getMonth()-i);tabs.push({mk:monthKey(d),label:d.toLocaleDateString('en',{month:'short',year:'2-digit'})});}
+  const nm=new Date(today2);nm.setDate(1);nm.setMonth(today2.getMonth()+1);
+  tabs.push({mk:monthKey(nm),label:nm.toLocaleDateString('en',{month:'short',year:'2-digit'})});
+  document.getElementById('shop-month-tabs').innerHTML=tabs.map(function(t){
+    return '<div class="shop-mtab '+(curShopMonth===t.mk?'active':'')+'" onclick="setShopMonth(\''+t.mk+'\',this)">'+t.label+'</div>';
+  }).join('');
+  const monthItems=(S.shop.items||[]).filter(function(i){return i.month===curShopMonth;});
+  const done=monthItems.filter(function(i){return i.bought;}).length,total=monthItems.length;
+  const est=monthItems.reduce(function(s,i){return s+(i.price||0);},0);
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('shop-done-count').textContent=done+'/'+total;
+  document.getElementById('shop-total-est').textContent=est?fmtINR(est):'No prices set';
+  document.getElementById('shop-progress-bar').style.width=pct+'%';
+  const cats=S.shop.categories||[];
+  document.getElementById('shop-cat-pills').innerHTML=cats.map(function(c){
+    return '<div class="shop-cat-pill '+(shopSelCat===c?'sel':'')+'" onclick="shopPickCat(\''+c+'\')">'+(SHOP_CAT_ICONS[c]||'📦')+' '+c+'</div>';
+  }).join('');
+  document.getElementById('shop-filters').innerHTML=
+    '<div class="shop-ftab '+(shopFilterStatus==='all'?'active':'')+'" onclick="setShopFilter(\'all\',this)">All ('+total+')</div>'+
+    '<div class="shop-ftab '+(shopFilterStatus==='pending'?'active':'')+'" onclick="setShopFilter(\'pending\',this)">Pending ('+(total-done)+')</div>'+
+    '<div class="shop-ftab '+(shopFilterStatus==='done'?'active':'')+'" onclick="setShopFilter(\'done\',this)">Bought ('+done+')</div>'+
+    cats.filter(function(c){return monthItems.some(function(i){return i.cat===c;});}).map(function(c){
+      return '<div class="shop-ftab '+(shopFilterCat===c?'active':'')+'" onclick="setShopCatFilter(\''+c+'\',this)">'+(SHOP_CAT_ICONS[c]||'📦')+' '+c+'</div>';
+    }).join('');
+  let filtered=monthItems.slice();
+  if(shopFilterStatus==='pending')filtered=filtered.filter(function(i){return !i.bought;});
+  if(shopFilterStatus==='done')filtered=filtered.filter(function(i){return i.bought;});
+  if(shopFilterCat!=='all')filtered=filtered.filter(function(i){return i.cat===shopFilterCat;});
+  filtered.sort(function(a,b){
+    if(a.bought!==b.bought)return a.bought?1:-1;
+    var po={urgent:0,normal:1,optional:2};
+    return (po[a.priority]||1)-(po[b.priority]||1);
+  });
+  const list=document.getElementById('shop-list');
+  if(!filtered.length){
+    list.innerHTML='<div style="text-align:center;padding:32px;color:var(--txt3);font-size:14px">'+(total===0?'No items yet — add something to buy! 🛒':'No items match this filter')+'</div>';
+    return;
+  }
+  list.innerHTML=filtered.map(function(item){
+    const realIdx=(S.shop.items||[]).indexOf(item);
+    const catColor=SHOP_CAT_COLORS[item.cat]||'var(--pu)';
+    const priColor=PRIORITY_COLORS[item.priority]||'var(--txt3)';
+    const catIcon=SHOP_CAT_ICONS[item.cat]||'📦';
+    const priLabel=PRIORITY_LABELS[item.priority]||'';
+    let html='<div class="shop-item '+(item.bought?'bought':'')+'" id="si-'+realIdx+'">';
+    html+='<div class="shop-chk '+(item.bought?'done':'')+'" onclick="togShopItem('+realIdx+')">'+(item.bought?'✓':'')+'</div>';
+    html+='<div class="shop-item-info">';
+    html+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">';
+    html+='<div class="shop-item-name">'+item.name+'</div>';
+    if(item.priority&&item.priority!=='normal')html+='<span style="font-size:10px;color:'+priColor+';font-family:var(--font-head);font-weight:700">'+priLabel+'</span>';
+    html+='</div>';
+    html+='<div class="shop-item-meta"><span class="shop-cat-badge" style="background:'+catColor+'18;color:'+catColor+'">'+catIcon+' '+(item.cat||'Other')+'</span>';
+    if(item.note)html+=' · '+item.note;
+    if(item.bought&&item.boughtDate)html+=' · Bought '+fmts(new Date(item.boughtDate));
+    html+='</div></div>';
+    html+='<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">';
+    if(item.price)html+='<div class="shop-item-price">'+fmtINR(item.price)+'</div>';
+    html+='<button onclick="delShopItem('+realIdx+')" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:13px;padding:2px">✕</button>';
+    html+='</div></div>';
+    return html;
+  }).join('');
+}
+function shopPickCat(c){shopSelCat=c;document.querySelectorAll('.shop-cat-pill').forEach(function(p){p.classList.remove('sel');});event.target.classList.add('sel');renderShop();}
+function setShopMonth(mk,el){curShopMonth=mk;document.querySelectorAll('.shop-mtab').forEach(function(t){t.classList.remove('active');});el.classList.add('active');shopFilterStatus='all';shopFilterCat='all';renderShop();}
+function setShopFilter(status,el){shopFilterStatus=status;shopFilterCat='all';document.querySelectorAll('.shop-ftab').forEach(function(t){t.classList.remove('active');});el.classList.add('active');renderShop();}
+function setShopCatFilter(cat,el){shopFilterCat=cat;shopFilterStatus='all';document.querySelectorAll('.shop-ftab').forEach(function(t){t.classList.remove('active');});if(el)el.classList.add('active');renderShop();}
+function addShopItem(){
+  const name=document.getElementById('shop-item-name').value.trim();if(!name)return;
+  const price=parseFloat(document.getElementById('shop-item-price').value)||0;
+  const priority=document.getElementById('shop-item-priority').value||'normal';
+  if(!S.shop)S.shop={items:[],categories:['Groceries','Personal Care','Clothes','Electronics','Home','Medicine','Other']};
+  if(!S.shop.items)S.shop.items=[];
+  if(!curShopMonth)curShopMonth=monthKey();
+  S.shop.items.push({name:name,price:price,priority:priority,cat:shopSelCat||'Groceries',month:curShopMonth,bought:false,id:Date.now()});
+  document.getElementById('shop-item-name').value='';
+  document.getElementById('shop-item-price').value='';
+  save();renderShop();
+}
+function togShopItem(idx){
+  if(!S.shop||!S.shop.items[idx])return;
+  S.shop.items[idx].bought=!S.shop.items[idx].bought;
+  S.shop.items[idx].boughtDate=S.shop.items[idx].bought?new Date().toISOString():null;
+  save();renderShop();
+}
+function delShopItem(idx){if(confirm('Remove this item?')){S.shop.items.splice(idx,1);save();renderShop();}}
+
+// ═══════════════════════════════════════════════════════
+// BACKUP · RESTORE · MIGRATION
+// ═══════════════════════════════════════════════════════
+
+// ── Storage meter ──
+function updateStorageMeter(){
+  try{
+    const raw=localStorage.getItem('lp5')||'';
+    const bytes=new Blob([raw]).size;
+    const kb=Math.round(bytes/1024);
+    const pct=Math.min(100,Math.round(bytes/(5*1024*1024)*100));
+    const lbl=document.getElementById('storage-meter-lbl');
+    const bar=document.getElementById('storage-meter-bar');
+    if(lbl)lbl.textContent=`${kb} KB / ~5,120 KB (${pct}%)`;
+    if(bar){
+      bar.style.width=pct+'%';
+      bar.style.background=pct>80?'var(--re)':pct>50?'var(--ye)':'var(--gr)';
+    }
+    const note=document.getElementById('last-backup-note');
+    if(note&&S.meta?.lastBackup){
+      note.textContent='Last backup: '+new Date(S.meta.lastBackup).toLocaleDateString('en',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    }
+  }catch(e){}
+}
+
+// ── GitHub credentials (stored in localStorage separately, not in S) ──
+function saveGhCreds(){
+  const creds={user:document.getElementById('gh-user').value.trim(),repo:document.getElementById('gh-repo').value.trim(),token:document.getElementById('gh-token').value.trim()};
+  localStorage.setItem('lp5_gh',JSON.stringify(creds));
+}
+function loadGhCreds(){
+  try{
+    const c=JSON.parse(localStorage.getItem('lp5_gh')||'{}');
+    if(c.user)document.getElementById('gh-user').value=c.user;
+    if(c.repo)document.getElementById('gh-repo').value=c.repo;
+    if(c.token)document.getElementById('gh-token').value=c.token;
+  }catch(e){}
+}
+function ghStatus(msg,ok){
+  const el=document.getElementById('gh-status');if(!el)return;
+  el.style.display='block';
+  el.style.color=ok?'var(--gr)':'var(--re)';
+  el.textContent=msg;
+  if(ok)setTimeout(()=>{el.style.display='none';},4000);
+}
+
+// ── GitHub Backup ──
+async function githubBackup(){
+  const user=document.getElementById('gh-user').value.trim();
+  const repo=document.getElementById('gh-repo').value.trim();
+  const token=document.getElementById('gh-token').value.trim();
+  if(!user||!repo||!token){ghStatus('⚠️ Fill in username, repo name, and token first.',false);return;}
+  ghStatus('⏳ Uploading to GitHub…',true);
+  const path=`lifepulse-data-${getPid()||'backup'}.json`;
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(S,null,2))));
+  try{
+    // Get current SHA if file exists (required for update)
+    let sha='';
+    const getRes=await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`,{headers:{Authorization:`token ${token}`,'Accept':'application/vnd.github.v3+json'}});
+    if(getRes.ok){const j=await getRes.json();sha=j.sha||'';}
+    const body={message:`LifePulse backup ${new Date().toISOString()}`,content};
+    if(sha)body.sha=sha;
+    const putRes=await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'},body:JSON.stringify(body)});
+    if(putRes.ok){
+      if(!S.meta)S.meta={};
+      S.meta.lastBackup=new Date().toISOString();
+      save();
+      ghStatus('✅ Backed up successfully! File: '+path,true);
+      updateStorageMeter();
+    } else {
+      const err=await putRes.json();
+      ghStatus('❌ GitHub error: '+(err.message||putRes.status),false);
+    }
+  }catch(e){ghStatus('❌ Network error: '+e.message,false);}
+}
+
+// ── GitHub Restore ──
+async function githubRestore(){
+  const user=document.getElementById('gh-user').value.trim();
+  const repo=document.getElementById('gh-repo').value.trim();
+  const token=document.getElementById('gh-token').value.trim();
+  if(!user||!repo||!token){ghStatus('⚠️ Fill in username, repo name, and token first.',false);return;}
+  if(!confirm('Restore data from GitHub? This will merge with your current data (newer entries win).'))return;
+  ghStatus('⏳ Fetching from GitHub…',true);
+  try{
+    const res=await fetch(`https://api.github.com/repos/${user}/${repo}/contents/lifepulse-data-${getPid()||'backup'}.json`,{headers:{Authorization:`token ${token}`,'Accept':'application/vnd.github.v3+json'}});
+    if(!res.ok){ghStatus('❌ File not found on GitHub. Back up first.',false);return;}
+    const j=await res.json();
+    const decoded=decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))));
+    const remote=JSON.parse(decoded);
+    mergeAndRestore(remote,'GitHub');
+    ghStatus('✅ Restored and merged from GitHub!',true);
+  }catch(e){ghStatus('❌ Error: '+e.message,false);}
+}
+
+// ── Local file import ──
+function importDataFile(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const imported=JSON.parse(e.target.result);
+      if(!imported.sections&&!imported.milk&&!imported.finance){alert('❌ Invalid file — this does not look like a LifePulse backup.');return;}
+      if(confirm(`Import data from "${file.name}"? Will merge with current data — newer entries win.`)){
+        mergeAndRestore(imported,'file');
+        alert('✅ Data imported and merged successfully!');
+      }
+    }catch(err){alert('❌ Could not read file: '+err.message);}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+// ── Smart merge/migration ──
+// Strategy: for keyed records (habits log, milk days, finance entries, shop items) 
+// keep ALL entries from both, deduplicate by id/date key, newer timestamp wins on conflict.
+function mergeAndRestore(remote, source){
+  try{
+    const local=JSON.parse(JSON.stringify(S));// deep clone current
+
+    // 1. Habit completion logs: merge by date key
+    if(remote.log||local.log){
+      const merged={...(local.log||{})};
+      Object.entries(remote.log||{}).forEach(([date,secMap])=>{
+        if(!merged[date])merged[date]={};
+        Object.entries(secMap).forEach(([secId,habits])=>{
+          // remote wins if it has more data for this date
+          if(!merged[date][secId]||Object.keys(habits).length>=Object.keys(merged[date][secId]||{}).length){
+            merged[date][secId]=habits;
+          }
+        });
+      });
+      S.log=merged;
+    }
+
+    // 2. Milk days: union of all days, remote wins only if local has 0 for that day
+    if(remote.milk){
+      if(!S.milk)S.milk={};
+      const localDays=S.milk.days||{};
+      const remoteDays=remote.milk.days||{};
+      const mergedDays={...remoteDays,...localDays};// local wins (more recent)
+      S.milk={...remote.milk,...S.milk,days:mergedDays};
+    }
+
+    // 3. Finance entries: merge by id, keep all unique
+    if(remote.finance){
+      if(!S.finance)S.finance={entries:[],categories:[]};
+      const localIds=new Set((S.finance.entries||[]).map(e=>e.id));
+      const newEntries=(remote.finance.entries||[]).filter(e=>!localIds.has(e.id));
+      S.finance.entries=[...(S.finance.entries||[]),...newEntries];
+      // merge categories: keep local + add any from remote not already present
+      const localCatIds=new Set((S.finance.categories||[]).map(c=>c.id));
+      const newCats=(remote.finance.categories||[]).filter(c=>!localCatIds.has(c.id));
+      S.finance.categories=[...(S.finance.categories||[]),...newCats];
+    }
+
+    // 4. Shopping items: merge by id
+    if(remote.shop){
+      if(!S.shop)S.shop={items:[],categories:[]};
+      const localShopIds=new Set((S.shop.items||[]).map(i=>i.id));
+      const newItems=(remote.shop.items||[]).filter(i=>!localShopIds.has(i.id));
+      S.shop.items=[...(S.shop.items||[]),...newItems];
+      // merge categories (union)
+      const catSet=new Set([...(S.shop.categories||[]),...(remote.shop.categories||[])]);
+      S.shop.categories=[...catSet];
+    }
+
+    // 5. Sections: merge habits lists, add any new sections from remote
+    if(remote.sections){
+      const localSecIds=new Set((S.sections||[]).map(s=>s.id));
+      (remote.sections||[]).forEach(rSec=>{
+        const lSec=S.sections.find(s=>s.id===rSec.id);
+        if(lSec){
+          // merge habit lists (union)
+          const habSet=new Set([...lSec.habits,...rSec.habits]);
+          lSec.habits=[...habSet];
+        } else {
+          S.sections.push(rSec);// new section from remote
+        }
+      });
+    }
+
+    // 6. Cycle data: keep most entries
+    if(remote.cycle){
+      if(!S.cycle)S.cycle={};
+      if((remote.cycle.periods||[]).length>(S.cycle.periods||[]).length){S.cycle.periods=remote.cycle.periods;}
+      if((remote.cycle.symptoms||[]).length>(S.cycle.symptoms||[]).length){S.cycle.symptoms=remote.cycle.symptoms;}
+    }
+
+    // 7. Profile, appearance, prefs, meals: local wins (most recent changes)
+    // Only copy if local doesn't have them
+    ['profile','appearance','meals'].forEach(k=>{if(!S[k]&&remote[k])S[k]=remote[k];});
+
+    // 8. Meta
+    if(!S.meta)S.meta={};
+    S.meta.lastRestore=new Date().toISOString();
+    S.meta.restoreSource=source;
+
+    save();
+    location.reload();// reload to re-render everything fresh
+  }catch(e){
+    alert('❌ Merge failed: '+e.message+'\n\nYour local data was not changed.');
+  }
+}
+
+checkWelcome();
+</script>
+</body>
+</html>
